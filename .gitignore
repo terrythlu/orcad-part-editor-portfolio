@@ -1,0 +1,25 @@
+# --- 使用者真實 OrCAD 設計資料（不納入版本控制 / 不上傳）---
+Y_*.txt
+*.dsn
+*.opj
+*.brd
+
+# --- 測試執行時產生的輸出檔（非原始碼）---
+test/*_out.txt
+test/sort_out*.txt
+test/delcol_out.txt
+test/multi.txt
+test/noheader.txt
+test/*.xlsx
+test/*.png
+test/XlsxTest.exe
+test/display_order_input.txt
+OrcadPartEditor_v*.exe
+
+# --- 編譯 / 暫存 ---
+*.tmp
+*.pdb
+*.obj
+*.suo
+bin/
+obj/
