@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SVID × VR Controller｜Intel CPU 供電圖解教學</title>
+<style>
+:root{--ink:#17243b;--muted:#607086;--line:#dce5ee;--blue:#2563eb;--cyan:#0891b2;--teal:#0d9488;--amber:#b45309;--bg:#f4f7fb;--card:white;--navy:#101b31}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.72 system-ui,-apple-system,'Noto Sans TC','Microsoft JhengHei',sans-serif}
+a{color:#1659bf}a:hover{text-decoration-thickness:2px}.shell{max-width:1120px;margin:0 auto;padding:24px 20px 70px}
+.hero{padding:36px 38px;color:#fff;background:linear-gradient(125deg,#0f1930,#123e79 70%,#126d84);border-radius:24px;box-shadow:0 14px 32px #142d4d20}.eyebrow{font-size:12px;letter-spacing:2px;font-weight:800;color:#84e2f1}.hero h1{font-size:clamp(27px,4vw,43px);line-height:1.2;letter-spacing:-.03em;margin:12px 0 14px}.hero p{max-width:800px;color:#d4e6f6;font-size:17px;margin:0}.hero .summary{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}.hero .summary span{border:1px solid #ffffff55;background:#ffffff16;border-radius:30px;padding:6px 13px;font-size:13px}
+.toc{display:flex;gap:8px;flex-wrap:wrap;margin:22px 0}.toc a{text-decoration:none;padding:8px 12px;background:#fff;border:1px solid var(--line);border-radius:10px;font-size:13px;font-weight:650}
+section.panel{margin-top:22px;background:var(--card);border:1px solid #e5ebf1;border-radius:20px;padding:26px 30px;box-shadow:0 6px 22px #11284a0a}
+.kicker{font-size:12px;letter-spacing:1.6px;color:var(--blue);font-weight:800;margin:0 0 8px}h2{font-size:clamp(23px,3vw,29px);line-height:1.3;margin:0 0 14px}h3{font-size:19px;margin:0 0 9px;line-height:1.45}p{margin:8px 0 14px}.muted{color:var(--muted)}.grid{display:grid;gap:14px;grid-template-columns:repeat(2,minmax(0,1fr))}.tri{grid-template-columns:repeat(3,minmax(0,1fr))}.mini{background:#f8fbff;border:1px solid #e5eef8;border-radius:14px;padding:18px}.mini p:last-child{margin-bottom:0}.tag{font-size:12px;border-radius:20px;padding:3px 9px;background:#e5f0ff;color:#174f9e;font-weight:800;display:inline-block;margin-bottom:8px}.tag.green{background:#dcfce7;color:#166534}.tag.orange{background:#fff0da;color:#99510a}.callout{border-left:4px solid #2885ca;background:#eff7ff;border-radius:8px;padding:13px 16px;margin-top:16px}.warning{background:#fff8ec;border-left-color:#e5a125}.diagram{overflow-x:auto;padding:12px 0}.diagram svg{display:block;width:100%;height:auto;min-width:650px}.diagram small{display:block;text-align:center;color:#697789;margin-top:8px}.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--muted)}.dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:5px;background:#2563eb}.dot.green{background:#0d9488}.dot.amber{background:#df8f23}
+table{border-collapse:collapse;width:100%;font-size:14px}td,th{border-bottom:1px solid var(--line);padding:11px 10px;text-align:left;vertical-align:top}th{background:#eff5fb;color:#24466b}td:first-child{font-weight:800;white-space:nowrap}.twrap{overflow-x:auto}ul{margin:8px 0 8px 20px;padding:0}li{margin:6px 0}.steps{counter-reset:step}.steps>div{position:relative;padding:10px 10px 12px 53px;border-bottom:1px solid #edf1f6}.steps>div:last-child{border-bottom:0}.steps>div:before{counter-increment:step;content:counter(step);position:absolute;left:5px;top:12px;width:29px;height:29px;display:grid;place-items:center;color:white;background:#2769cb;border-radius:50%;font-weight:800}.steps b{display:block}blockquote{margin:14px 0;background:#f3f7fc;border-left:4px solid var(--teal);border-radius:10px;padding:17px 20px;font-size:17px}
+select{max-width:100%;font:inherit;background:#fff;border:1px solid #a7bcd6;border-radius:10px;padding:10px 14px;color:#123d65}button{font:inherit;border:1px solid #aabdda;background:#fff;padding:10px 16px;border-radius:10px;color:#194975;cursor:pointer;font-weight:700}button:hover{background:#f2f7fe}button:focus-visible,select:focus-visible{outline:3px solid #22a4cd}.interactive{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}.fact{font-size:28px;color:#185bbb;font-weight:850}.small{font-size:13px;color:var(--muted)}.footer{font-size:13px;color:#64758b;text-align:center;margin:30px 0 0}.sources li{font-size:14px;word-break:break-word}.quiz details{border:1px solid #e0e7ef;border-radius:11px;margin:10px 0;padding:10px 14px}.quiz summary{font-weight:760;cursor:pointer}.quiz details p{margin:10px 0 5px;color:#45566b}.code{font-family:ui-monospace,'Cascadia Code',Consolas,monospace;background:#eef3fa;padding:2px 6px;border-radius:5px}.note-k{font-size:13px;color:#64748b}
+@media(max-width:760px){.shell{padding:12px 12px 42px}.hero{padding:26px 22px}.grid,.tri,.interactive{grid-template-columns:1fr}section.panel{padding:22px 18px}.diagram svg{min-width:580px}.toc{margin:14px 0}.toc a{font-size:12px}}
+@media print{body{background:white}.shell{max-width:none;padding:0}.hero,section.panel{box-shadow:none;break-inside:avoid}.toc{display:none}a{text-decoration:underline}}
+</style>
+</head>
+<body>
+<div class="shell">
+<header class="hero">
+<div class="eyebrow">INTEL CPU PLATFORM · 電源架構入門</div>
+<h1>SVID × VR Controller<br>從 CPU 下指令到真正供電</h1>
+<p>一份從零開始的 HTML 圖解教材：看懂縮寫、訊號方向、VRM 內部結構、開機時序，最後學會遇到「CPU 不開機」時怎麼查。</p>
+<div class="summary"><span>圖解 5 張</span><span>Intel 平台整合思維</span><span>面試問答與除錯</span><span>離線可開啟</span></div>
+</header>
+<nav class="toc"><a href="#concept">01 一句話</a><a href="#arch">02 系統架構</a><a href="#pins">03 三條訊號</a><a href="#vrm">04 VR 控制器</a><a href="#sequence">05 開機時序</a><a href="#debug">06 除錯</a><a href="#interview">07 面試</a><a href="#quiz">08 小測驗</a></nav>
+<section class="panel" id="concept">
+<div class="kicker">01 · CONCEPTS</div><h2>先把四個名詞分清楚</h2>
+<div class="grid">
+<div class="mini"><span class="tag">VID</span><h3>Voltage Identification</h3><p>代表 CPU 想要的「電壓代碼／目標設定值」。它不是量測出來的電壓值。</p></div>
+<div class="mini"><span class="tag">SVID</span><h3>Serial Voltage Identification</h3><p>CPU 與 VR Controller 交換電壓要求、狀態資訊的<strong>序列通訊介面</strong>。</p></div>
+<div class="mini"><span class="tag green">VR Controller</span><h3>Voltage Regulator Controller</h3><p>負責根據要求及回授，產生 PWM 控制訊號、調整輸出並做保護。</p></div>
+<div class="mini"><span class="tag orange">VRM / VR</span><h3>Voltage Regulator Module / Regulator</h3><p>包含 Controller、Power Stage、電感、電容及回授等，用電力電路<strong>真正供電</strong>給 CPU。</p></div>
+</div>
+<div class="callout"><strong>白話記法：</strong>CPU 像客人，說「我要這個電壓」；SVID 像點餐系統；VR Controller 像廚房主管；Power Stage、電感與電容才是實際做出供電的廚房。</div>
+</section>
+<section class="panel" id="arch">
+<div class="kicker">02 · SYSTEM ARCHITECTURE</div><h2>CPU 到 VRM：哪條是「訊號」？哪條是「電」？</h2>
+<p>請先注意<strong>兩個不同方向</strong>：控制命令從 CPU 去 VR Controller；真正的 Vcore 電流則從 VRM 流進 CPU。</p>
+<div class="diagram">
+<svg viewBox="0 0 1020 450" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="CPU SVID VRM 系統架構：SVID 控制訊號從 CPU 送往 VR Controller，VRM 將 12V 轉成低電壓輸出到 CPU">
+<defs><marker id="ab" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#2563eb"/></marker><marker id="ag" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#0d9488"/></marker><marker id="aa" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#d08a20"/></marker></defs>
+<rect x="10" y="16" width="1000" height="420" rx="19" fill="#f7fbff" stroke="#dae8f8"/>
+<rect x="55" y="65" width="244" height="320" rx="22" fill="#e6efff" stroke="#5289d8" stroke-width="2"/>
+<text x="177" y="107" text-anchor="middle" fill="#174e95" font-size="25" font-weight="800">Intel CPU</text><text x="177" y="132" text-anchor="middle" fill="#174e95" font-size="15">例如 Xeon D 平台</text>
+<rect x="86" y="176" width="182" height="82" rx="12" fill="white" stroke="#adc7ed"/><text x="177" y="209" text-anchor="middle" fill="#263b58" font-size="19" font-weight="700">Power Management</text><text x="177" y="233" text-anchor="middle" fill="#64748b" font-size="15">提出 VID 需求</text>
+<rect x="86" y="293" width="182" height="48" rx="10" fill="#d2faf0" stroke="#71c6b3"/><text x="177" y="324" text-anchor="middle" fill="#076d65" font-size="17" font-weight="750">消耗 Vcore</text>
+<rect x="375" y="143" width="229" height="143" rx="18" fill="#fff4db" stroke="#e5ab44" stroke-width="2"/>
+<text x="489" y="180" text-anchor="middle" fill="#84510b" font-size="22" font-weight="800">VR Controller</text><text x="489" y="210" text-anchor="middle" fill="#855c21" font-size="16">SVID 解碼 / PWM 控制</text><text x="489" y="238" text-anchor="middle" fill="#855c21" font-size="15">回授、保護、PGOOD</text>
+<rect x="718" y="143" width="245" height="143" rx="18" fill="#e4fbf7" stroke="#45b1a3" stroke-width="2"/>
+<text x="840" y="181" text-anchor="middle" fill="#08766d" font-size="22" font-weight="800">Power Stages</text><text x="840" y="211" text-anchor="middle" fill="#08766d" font-size="16">MOSFET / Inductor</text><text x="840" y="238" text-anchor="middle" fill="#08766d" font-size="16">Output Capacitors</text>
+<path d="M299 172H375" stroke="#2563eb" stroke-width="4" marker-end="url(#ab)"/><text x="338" y="158" text-anchor="middle" fill="#1856b5" font-size="15" font-weight="700">SVID</text>
+<path d="M604 217H718" stroke="#d08a20" stroke-width="4" marker-end="url(#aa)"/><text x="660" y="205" text-anchor="middle" fill="#92600f" font-size="16" font-weight="800">PWM</text>
+<path d="M840 143V97H570V63H177V65" stroke="#0d9488" stroke-width="4" fill="none" marker-end="url(#ag)"/><text x="731" y="85" fill="#077e71" font-size="16" font-weight="800">Vcore → CPU（功率路徑）</text>
+<path d="M727 277V352H605" stroke="#d08a20" stroke-width="3" fill="none" stroke-dasharray="6 5" marker-end="url(#aa)"/><text x="683" y="372" fill="#92600f" text-anchor="middle" font-size="15">Voltage / Current Feedback 回授</text>
+<rect x="752" y="310" width="186" height="56" rx="10" fill="#fff" stroke="#a9bbc9"/><text x="845" y="334" text-anchor="middle" fill="#405167" font-size="17" font-weight="750">12V Input</text><text x="845" y="352" text-anchor="middle" fill="#64748b" font-size="12">外部電源／主板供電</text><path d="M842 310V286" stroke="#0d9488" stroke-width="4" marker-end="url(#ag)"/>
+<text x="420" y="405" fill="#536d87" font-size="15">藍色：控制資料　綠色：實際供電　橘色：PWM / 回授</text>
+</svg><small>示意架構，不是 D-1713NT 的特定電路圖。VRM 實際配置需以所用 COM 模組原理圖為準。</small>
+</div>
+<div class="callout warning"><strong>容易搞錯：</strong>SVID 不負責輸送 CPU 的工作電流；<strong>VR Controller 本身也不是把大電流直接供給 CPU 的主要功率元件</strong>。後面還需要 Power Stage、電感與電容。</div>
+</section>
+<section class="panel" id="pins">
+<div class="kicker">03 · THREE SIGNALS</div><h2>SVID 有哪三條訊號？從誰到誰？</h2>
+<p>在典型 Intel SVID 系統中，CPU 是通訊主端，VR Controller 是受控端。訊號名稱依平台略有不同，常見是 <span class="code">SVID_CLK</span>、<span class="code">SVID_DATA</span>、<span class="code">SVID_ALERT#</span>。</p>
+<div class="twrap"><table><thead><tr><th>訊號</th><th>主要方向</th><th>用處</th><th>白話記憶</th></tr></thead><tbody>
+<tr><td>SVID_CLK</td><td>CPU → VR Controller</td><td>提供序列傳輸節拍，讓雙方在時脈下交換資訊</td><td>「照這個節奏對話」</td></tr>
+<tr><td>SVID_DATA</td><td>CPU ↔ VR Controller</td><td>CPU 發送 VID 指令，VR 回覆狀態／資料</td><td>「我們說話的內容」</td></tr>
+<tr><td>SVID_ALERT#</td><td>VR Controller → CPU</td><td>VR 通知狀態變化，例如完成狀態或故障事件；實際用途依協定</td><td>「有事要回報！」</td></tr>
+</tbody></table></div>
+<div class="diagram">
+<svg viewBox="0 0 1020 328" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="SVID 三條線：clock CPU 到 VR，data 雙向，alert VR 到 CPU">
+<defs><marker id="pblue" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9Z" fill="#2563eb"/></marker><marker id="porange" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9Z" fill="#cb861b"/></marker></defs>
+<rect x="16" y="16" width="988" height="295" rx="18" fill="#f8fbfe" stroke="#dbe6ef"/>
+<rect x="40" y="80" width="210" height="188" rx="16" fill="#e7f0ff" stroke="#8ab5f2" stroke-width="2"/><text x="145" y="122" fill="#184e9a" text-anchor="middle" font-size="29" font-weight="800">CPU</text><text x="145" y="158" fill="#345a89" text-anchor="middle" font-size="18">SVID Master</text>
+<rect x="768" y="80" width="210" height="188" rx="16" fill="#fff0d3" stroke="#eac283" stroke-width="2"/><text x="873" y="122" fill="#8c5715" text-anchor="middle" font-size="28" font-weight="800">VR</text><text x="873" y="154" fill="#8c5715" text-anchor="middle" font-size="20">Controller</text><text x="873" y="183" fill="#8c5715" text-anchor="middle" font-size="16">SVID Responder</text>
+<path d="M251 117H761" stroke="#2563eb" stroke-width="4" marker-end="url(#pblue)"/><rect x="442" y="94" width="128" height="33" rx="16" fill="white"/><text x="506" y="117" text-anchor="middle" fill="#1554b9" font-size="17" font-weight="800">CLK →</text>
+<path d="M260 174H754" stroke="#2563eb" stroke-width="4" marker-end="url(#pblue)"/><path d="M758 194H264" stroke="#2563eb" stroke-width="4" marker-end="url(#pblue)"/><rect x="434" y="162" width="145" height="34" rx="15" fill="white"/><text x="506" y="185" text-anchor="middle" fill="#1554b9" font-size="17" font-weight="800">DATA ↔</text>
+<path d="M758 242H259" stroke="#cb861b" stroke-width="4" marker-end="url(#porange)"/><rect x="415" y="221" width="177" height="34" rx="15" fill="white"/><text x="504" y="244" text-anchor="middle" fill="#9d6710" font-size="17" font-weight="800">← ALERT#</text>
+<text x="503" y="293" text-anchor="middle" fill="#64748b" font-size="15"># 代表低電位有效（Active Low）</text>
+</svg><small>Clock 與 Data 在常見 Intel SVID 設計採開汲極（open-drain）方式，需依平台規範配置適合的上拉及訊號電壓。</small>
+</div>
+<div class="callout"><strong>面試考點：</strong>不要把 SVID 當成 I²C，也不要把 Intel 的 SVID 跟 AMD 的 SVI2／SVI3 混為一談。它們都是電壓管理介面，但協定不同。</div>
+</section>
+<section class="panel" id="vrm">
+<div class="kicker">04 · INSIDE THE VRM</div><h2>VR Controller 到底在控制什麼？</h2>
+<div class="grid"><div class="mini"><h3>Controller 做決策</h3><p>解析電壓要求、產生 PWM、讀回授、保護過流／過壓／過熱，必要時回報警訊。</p></div><div class="mini"><h3>Power Stage 真正出力</h3><p>把 12V 經由高速切換及 LC 濾波變成 CPU 需要的低壓、大電流；多相並聯可分攤負載。</p></div></div>
+<div class="diagram">
+<svg viewBox="0 0 1020 394" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="多相 VRM 內部結構示意：VR controller PWM 控制兩組功率級，經電感及電容供電給 CPU，回授進入控制器">
+<defs><marker id="garr" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0 0L9 4.5L0 9Z" fill="#0b9180"/></marker><marker id="oarr" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0 0L9 4.5L0 9Z" fill="#d08a20"/></marker></defs>
+<rect x="13" y="15" width="995" height="363" rx="18" fill="#f8fbff" stroke="#dbe7f1"/>
+<rect x="40" y="129" width="183" height="138" rx="15" fill="#fff0d4" stroke="#e5ae4e" stroke-width="2"/><text x="132" y="169" font-size="20" font-weight="800" fill="#8c5d19" text-anchor="middle">VR Controller</text><text x="132" y="194" font-size="16" fill="#8c5d19" text-anchor="middle">PWM1 / PWM2</text><text x="132" y="219" font-size="15" fill="#8c5d19" text-anchor="middle">Feedback / OCP</text>
+<rect x="293" y="74" width="174" height="86" rx="12" fill="#e0f4ff" stroke="#6cb7e4"/><text x="380" y="111" text-anchor="middle" fill="#205877" font-size="21" font-weight="800">Power Stage 1</text><text x="380" y="136" text-anchor="middle" fill="#205877" font-size="15">MOSFET + Driver</text>
+<rect x="293" y="227" width="174" height="86" rx="12" fill="#e0f4ff" stroke="#6cb7e4"/><text x="380" y="262" text-anchor="middle" fill="#205877" font-size="21" font-weight="800">Power Stage 2</text><text x="380" y="288" text-anchor="middle" fill="#205877" font-size="15">MOSFET + Driver</text>
+<rect x="546" y="88" width="120" height="65" rx="11" fill="#dcf9f3" stroke="#48b8a9"/><text x="606" y="115" text-anchor="middle" fill="#0d7365" font-size="23" font-weight="800">L1</text><text x="606" y="136" text-anchor="middle" fill="#0d7365" font-size="14">電感</text>
+<rect x="546" y="239" width="120" height="65" rx="11" fill="#dcf9f3" stroke="#48b8a9"/><text x="606" y="265" text-anchor="middle" fill="#0d7365" font-size="23" font-weight="800">L2</text><text x="606" y="288" text-anchor="middle" fill="#0d7365" font-size="14">電感</text>
+<rect x="728" y="158" width="113" height="86" rx="12" fill="#d8f9f0" stroke="#48b8a9"/><text x="784" y="191" text-anchor="middle" fill="#087469" font-size="23" font-weight="800">Cout</text><text x="784" y="215" text-anchor="middle" fill="#087469" font-size="15">輸出電容</text>
+<rect x="886" y="158" width="95" height="86" rx="12" fill="#e8efff" stroke="#89abf2"/><text x="933" y="202" text-anchor="middle" fill="#2356a0" font-size="23" font-weight="800">CPU</text>
+<path d="M223 168H251V117H293" stroke="#d08a20" stroke-width="4" fill="none" marker-end="url(#oarr)"/><path d="M223 224H251V270H293" stroke="#d08a20" stroke-width="4" fill="none" marker-end="url(#oarr)"/>
+<path d="M467 117H546M467 270H546" stroke="#0b9180" stroke-width="4" marker-end="url(#garr)"/>
+<path d="M666 121H695V196H728M666 271H695V211H728" stroke="#0b9180" stroke-width="4" fill="none" marker-end="url(#garr)"/>
+<path d="M841 199H886" stroke="#0b9180" stroke-width="4" marker-end="url(#garr)"/>
+<path d="M728 226H710V341H132V268" stroke="#d08a20" stroke-width="3" fill="none" stroke-dasharray="8 6" marker-end="url(#oarr)"/>
+<text x="421" y="333" text-anchor="middle" fill="#9b6a1b" font-size="16" font-weight="800">輸出電壓 / 電流回授</text><text x="505" y="50" text-anchor="middle" fill="#496176" font-size="15">以 2 相示意；實際 CPU VRM 可能使用更多相、不同整合式功率級</text>
+</svg>
+</div>
+<p><strong>控制核心：</strong>VR Controller 比較「CPU 要的目標」與「回授量到的輸出」，再調整 PWM。負載瞬間從輕載變重載時，它還需要兼顧<strong>暫態響應（Transient Response）</strong>、Load-line、穩定度與保護。</p>
+<div class="callout warning"><strong>一個工程師必懂的觀念：</strong>CPU 要求某個 VID，不代表萬用表量到的 Vcore 一定與之完全相同；負載線（load-line）、電流、量測位置與回授設定都會影響實際電壓。</div>
+</section>
+<section class="panel" id="sequence">
+<div class="kicker">05 · POWER SEQUENCING</div><h2>開機時，SVID 是第一個出現的嗎？</h2>
+<p><strong>不一定，通常不是。</strong>啟動前需要先有控制器可工作的供電、啟用條件和必要平台電源；控制器可能依預設的啟動設定建立初始電壓。之後 CPU／SoC 才在適當階段開始 SVID 通訊、要求不同運行電壓。</p>
+<div class="diagram">
+<svg viewBox="0 0 1020 372" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="CPU 電源啟動時序概念：12V、VR enable、初始 Vcore、Power Good、SVID 通訊和動態 VID 請求">
+<rect x="14" y="15" width="992" height="339" rx="16" fill="#f8fbff" stroke="#dce7f2"/>
+<text x="24" y="47" fill="#28466e" font-size="18" font-weight="800">示意波形：由左到右代表時間 →</text>
+<g font-size="15" fill="#4b6178" font-weight="700"><text x="24" y="93">VIN / 12V</text><text x="24" y="146">VR_EN</text><text x="24" y="199">Vcore</text><text x="24" y="252">PGOOD*</text><text x="24" y="306">SVID 活動</text></g>
+<g stroke="#d8e3ef" stroke-dasharray="4 6"><path d="M180 94H975M180 147H975M180 200H975M180 253H975M180 306H975"/></g>
+<path d="M180 109H233V80H973" fill="none" stroke="#0c9486" stroke-width="4" stroke-linejoin="round"/>
+<path d="M180 162H326V132H973" fill="none" stroke="#2563eb" stroke-width="4" stroke-linejoin="round"/>
+<path d="M180 215H393C423 215 427 191 464 185H973" fill="none" stroke="#14a0a8" stroke-width="4" stroke-linejoin="round"/>
+<path d="M180 268H517V238H973" fill="none" stroke="#c17e14" stroke-width="4" stroke-linejoin="round"/>
+<path d="M180 323H654V295H674V323H697V295H718V323H741V295H762V323H795V295H816V323H848V295H871V323H973" fill="none" stroke="#7c3aed" stroke-width="4" stroke-linejoin="round"/>
+<g font-size="13" fill="#64748b"><text x="226" y="76">輸入有電</text><text x="329" y="124">啟用 VR</text><text x="436" y="173">初始電壓建立</text><text x="514" y="233">電壓穩定</text><text x="674" y="283">CPU 開始 SVID 交換</text></g>
+</svg><small>*PGOOD 時序位置、產生者、先後條件都依晶片和整個平台 power sequence 而定，圖不可直接當作測試規格。</small>
+</div>
+<div class="steps"><div><b>供電先到位</b>載板、模組的主電源／待機電源滿足啟動需求。</div><div><b>啟用 VR</b>Power sequencer / platform logic 使能相關 VR；VR 以符合設計的啟動狀態建立 rail。</div><div><b>確認穩定</b>VR 依自己的監控條件輸出 PGOOD，系統再按平台設計放行後續動作。</div><div><b>CPU 開始 SVID</b>CPU／SoC 在可通訊的階段向 VR 提出 VID，可能依負載與功耗狀態動態變更。</div></div>
+<div class="callout"><strong>跟上一份 ATX 教學接起來：</strong>ATX PSU 的 <span class="code">PWR_OK</span>、CPU VR Controller 的 <span class="code">PGOOD</span>、SVID 的 <span class="code">ALERT#</span> 是<strong>三個不同層次的訊號</strong>，不能把它們當成同一條線。</div>
+</section>
+<section class="panel" id="example">
+<div class="kicker">INTERACTIVE EXAMPLE</div><h2>小練習：假設 CPU 想改變 Vcore</h2>
+<p>這不是實際 D-1713NT 的電壓曲線，只是示意 SVID 如何讓 VR 改變目標電壓。</p>
+<div class="interactive"><div class="mini"><label for="scenario" style="display:block;font-weight:800;margin-bottom:9px">選擇工作狀態</label><select id="scenario"><option value="idle">低負載（示例）</option><option value="busy">高負載（示例）</option></select><p style="margin-top:12px">CPU 經 SVID 送出新的目標 VID，VR Controller 收到後調整 PWM，實際輸出再根據控制與回授逐步變化。</p></div><div class="mini" aria-live="polite"><div class="small">示意 VID 目標</div><div class="fact" id="target">0.85 V</div><div id="decision" style="font-weight:700;margin-top:4px">維持較低示例設定</div><div class="small" style="margin-top:8px">不是對應特定 CPU 的真實規格，也不是負載時實測 Vcore。</div></div></div>
+</section>
+<section class="panel" id="debug">
+<div class="kicker">06 · DEBUG MINDSET</div><h2>CPU 不開機，怎麼判斷是 SVID 還是 VR 出問題？</h2>
+<p>硬體工程師最有價值的是：<strong>先找出卡在哪一層，不要看到沒有 SVID 波形就直接判斷 CPU 壞了。</strong></p>
+<div class="twrap"><table><thead><tr><th>你看到什麼？</th><th>優先查什麼？</th><th>為什麼？</th></tr></thead><tbody>
+<tr><td>Vcore 完全沒有電壓</td><td>VIN、VR 控制器供電、VR_EN、設定、短路、Fault</td><td>不一定需要先有 SVID，VR 才開始工作</td></tr>
+<tr><td>Vcore 有，但立刻掉電</td><td>PGOOD、OCP/OVP/UVP、負載短路、時序</td><td>可能是保護機制或後續 rail 的問題</td></tr>
+<tr><td>SVID_CLK 沒活動</td><td>CPU 啟動條件、reset、時鐘、平台狀態、SVID 接線／上拉</td><td>CPU 可能尚未走到開始通訊的階段</td></tr>
+<tr><td>SVID 有活動，電壓不符合預期</td><td>控制器設定、對應 rail/address、load-line、feedback、Fault</td><td>有通訊不代表調壓已成功或輸出一定等於 VID</td></tr>
+<tr><td>電壓不穩或紋波過大</td><td>負載暫態、功率級、電感／電容、layout、remote sense</td><td>這是 VR 功率與控制迴路問題，不單是 SVID</td></tr>
+</tbody></table></div>
+<div class="grid" style="margin-top:15px"><div class="mini"><h3>量測順序</h3><p>① VIN → ② Controller Bias/EN → ③ Vcore → ④ PGOOD/Fault → ⑤ SVID_CLK/DATA/ALERT# → ⑥ 輸出暫態/回授。</p></div><div class="mini"><h3>SVID 和 PMBus 不一樣</h3><p><strong>SVID：</strong>通常由 CPU 主導運行電壓管理。<br><strong>PMBus：</strong>一些 VR Controller 額外提供，讓 BMC、EC 或測試工具進行設定、讀取電壓/電流/溫度與 Fault。不是每顆控制器都有。</p></div></div>
+<h3 style="margin-top:18px">同一顆 VR Controller 可能有兩條「管理通道」</h3>
+<div class="diagram">
+<svg viewBox="0 0 1020 265" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="CPU 經 SVID 與 VR controller 溝通；BMC 或 EC 可選用 PMBus 讀取與管理 VR controller">
+<defs><marker id="mgt" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0 0L9 4.5L0 9Z" fill="#2563eb"/></marker><marker id="mgg" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0 0L9 4.5L0 9Z" fill="#0d9488"/></marker></defs>
+<rect x="12" y="15" width="995" height="236" rx="18" fill="#f8fbff" stroke="#dce7f2"/>
+<rect x="45" y="43" width="240" height="75" rx="13" fill="#e7efff" stroke="#93b6f0"/><text x="165" y="74" text-anchor="middle" font-size="21" font-weight="800" fill="#20539d">CPU / SoC</text><text x="165" y="98" text-anchor="middle" font-size="14" fill="#47678e">動態 VID 與電源需求</text>
+<rect x="45" y="152" width="240" height="75" rx="13" fill="#dbf7ee" stroke="#78c7ba"/><text x="165" y="182" text-anchor="middle" font-size="21" font-weight="800" fill="#08766d">BMC / EC / 工具</text><text x="165" y="205" text-anchor="middle" font-size="14" fill="#427b78">狀態監控／參數管理（選配）</text>
+<rect x="667" y="72" width="285" height="136" rx="16" fill="#fff1d9" stroke="#e6bc73" stroke-width="2"/><text x="809" y="120" text-anchor="middle" font-size="25" font-weight="800" fill="#8f5c17">VR Controller</text><text x="809" y="150" text-anchor="middle" font-size="16" fill="#89642b">PWM / 保護 / Telemetry</text><text x="809" y="176" text-anchor="middle" font-size="14" fill="#89642b">是否支援 PMBus 依型號而定</text>
+<path d="M285 81H658" stroke="#2563eb" stroke-width="4" marker-end="url(#mgt)"/><text x="474" y="69" text-anchor="middle" font-size="19" font-weight="800" fill="#1955ad">SVID</text>
+<path d="M285 189H658" stroke="#0d9488" stroke-width="4" marker-end="url(#mgg)"/><text x="474" y="176" text-anchor="middle" font-size="19" font-weight="800" fill="#08766d">PMBus / SMBus（可選）</text>
+</svg><small>兩者角色不同；有些 VR Controller 會同時支援 SVID 與 PMBus，但不是所有 Intel CPU Module 都把 PMBus 接給載板。</small>
+</div>
+<div class="callout warning">若要量 SVID：先確認 <strong>logic level、適用探棒、上拉電源及 bus speed</strong>。不要把 SVID 當一般 3.3V GPIO 隨便加上拉。實際訊號與電阻值必須看 CPU 與 VR Controller 的 datasheet。</div>
+</section>
+<section class="panel" id="interview">
+<div class="kicker">07 · INTERVIEW</div><h2>面試的時候，怎麼講得像有 CPU Platform 經驗？</h2>
+<h3>30 秒中文版本</h3>
+<blockquote>我理解 Intel CPU 的供電不只是把 12V 降成 1V。CPU 可以透過 SVID 跟 VR Controller 溝通目標電壓；VR Controller 再控制多相 Buck 電路，並利用回授維持穩定。系統開機時，我會先確認主電源、VR Enable、初始電壓及 PGOOD，再往 CPU Reset 和 SVID 通訊方向查。這樣可以更快判斷問題在供電、時序還是平台初始化。</blockquote>
+<h3>如果面試官繼續問：「你以前用的是 D1713，真的有摸到 SVID 嗎？」</h3>
+<blockquote>我的實際經驗是 CPU Module 與 Carrier Board 的系統整合。就 SVID 而言，我清楚它在 CPU 與 VR 之間的作用，也知道如何檢查訊號與 power sequence；但實際是否有直接修改 VR Controller 設定，會以我當時負責的工作範圍說明，不會把模組供應商完成的設計說成是我自己做的。</blockquote>
+<div class="callout"><strong>你的專案備註：</strong>Intel 官方列有 <strong>Xeon D-1713NT</strong>（Ice Lake、4 cores、45W）。你之前說「D1713」，有可能是此料號的簡稱，但應以實際 CPU 標記與 COM Express Module 料號再確認。這份教材是通用 Intel SVID/VR 原理，<strong>不能由 D1713 這個稱呼直接推定實際 VR Controller 型號、rail 與 SVID 接線</strong>。</div>
+</section>
+<section class="panel quiz" id="quiz">
+<div class="kicker">08 · QUICK TEST</div><h2>三題小測驗（點開看答案）</h2>
+<details><summary>1. CPU 想降低 Vcore，SVID 跟 VR Controller 誰做什麼？</summary><p>CPU 透過 SVID 發出對應的 VID 請求，VR Controller 解讀後控制功率級，讓 Vcore 依設計轉到新工作點；不是 SVID 線直接輸出電壓。</p></details>
+<details><summary>2. 沒看到 SVID_CLK，就能判斷 VR Controller 壞掉嗎？</summary><p>不能。要先確認平台是否到達 SVID 通訊階段、CPU 啟動條件、主/待機 rails、reset 及 bus 連線。</p></details>
+<details><summary>3. VR Controller 和 PMBus 是同一樣東西嗎？</summary><p>不是。VR Controller 是硬體控制器；PMBus 是部分控制器支援的管理通訊介面，常被 BMC/EC/測試工具使用。</p></details>
+</section>
+<section class="panel sources" id="sources">
+<div class="kicker">ENGLISH SOURCES · 查證連結</div><h2>英文原始資料</h2><p class="muted">來源用來支持通用原理；不同 Intel 世代、VR 規格與 COM 模組電路仍可能不同。</p>
+<ol>
+<li><a href="https://www.intel.com.tw/content/dam/www/public/us/en/documents/datasheets/atom-processor-s1200-datasheet-vol-1.pdf" target="_blank" rel="noopener noreferrer">Intel Atom S1200 Datasheet — SerialVID interface: clock, data, alert; CPU/VR controller 主從關係</a></li>
+<li><a href="https://edc.intel.com/content/www/us/en/design/ipla/software-development-platforms/client/platforms/alder-lake-desktop/12th-generation-intel-core-processors-datasheet-volume-1-of-2/006/vcc-voltage-identification-vid/" target="_blank" rel="noopener noreferrer">Intel 12th Gen Core Datasheet — Voltage Identification (VID) 與 SVID 動態電壓管理</a></li>
+<li><a href="https://www.infineon.com/assets/row/public/documents/24/49/infineon-xdpe15284d-0000-datasheet-en.pdf" target="_blank" rel="noopener noreferrer">Infineon XDPE15284D — 多相 VR Controller、SVID、PMBus 與保護功能</a></li>
+<li><a href="https://www.intel.com/content/www/us/en/products/sku/226102/intel-xeon-d1713nt-processor-10m-cache-up-to-3-50-ghz/specifications.html" target="_blank" rel="noopener noreferrer">Intel Xeon D-1713NT — 正式 CPU 型號、Ice Lake 與規格</a></li>
+</ol><p class="note-k">本教材圖中的電壓數值、波形與相數均為「概念教學示意」，不是該 CPU 的 VR 驗證規格。</p>
+</section>
+<div class="footer">CPU Platform Power 101 · SVID &amp; VR Controller · 2026-11-14 · 繁體中文 HTML 單檔教材</div>
+</div>
+<script>
+(function(){const s=document.getElementById('scenario'), t=document.getElementById('target'),d=document.getElementById('decision');s.addEventListener('change',()=>{const busy=s.value==='busy';t.textContent=busy?'1.05 V':'0.85 V';d.textContent=busy?'要求提高示例目標（僅示意）':'維持較低示例設定';});})();
+</script>
+</body></html>
