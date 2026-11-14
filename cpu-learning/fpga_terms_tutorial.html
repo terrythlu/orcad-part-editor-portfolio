@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FPGA 面試重點教學：CDC / STA / ILA / Synthesis / Place & Route / WNS / Verilog / FPLD / CPLD</title>
+  <style>
+    :root{
+      --bg:#f5f7fb;--card:#ffffff;--ink:#1f2937;--sub:#4b5563;--blue:#2563eb;--blue2:#dbeafe;--green:#059669;--green2:#d1fae5;--orange:#d97706;--orange2:#ffedd5;--red:#dc2626;--red2:#fee2e2;--purple:#7c3aed;--purple2:#ede9fe;--line:#cbd5e1;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Arial,"Noto Sans TC",sans-serif;background:var(--bg);color:var(--ink);line-height:1.65}
+    .wrap{max-width:1100px;margin:0 auto;padding:24px}
+    h1,h2,h3{line-height:1.25}
+    h1{font-size:34px;margin:12px 0 8px}
+    h2{font-size:28px;margin:36px 0 12px;padding-bottom:8px;border-bottom:3px solid var(--blue2)}
+    h3{font-size:22px;margin:24px 0 10px}
+    p,li{font-size:17px}
+    .hero{background:linear-gradient(135deg,#eff6ff,#eef2ff 45%,#fdf2f8);border-radius:20px;padding:28px;border:1px solid #dbeafe;box-shadow:0 8px 20px rgba(0,0,0,.05)}
+    .tag{display:inline-block;padding:5px 10px;margin:4px 6px 0 0;border-radius:999px;background:#fff;border:1px solid var(--line);font-size:13px;color:var(--sub)}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+    .card{background:var(--card);border-radius:18px;padding:18px;border:1px solid #e5e7eb;box-shadow:0 6px 14px rgba(0,0,0,.04)}
+    .tip{border-left:6px solid var(--blue);background:#eff6ff;padding:14px 16px;border-radius:10px;margin:14px 0}
+    .warn{border-left:6px solid var(--red);background:#fef2f2;padding:14px 16px;border-radius:10px;margin:14px 0}
+    .good{border-left:6px solid var(--green);background:#ecfdf5;padding:14px 16px;border-radius:10px;margin:14px 0}
+    .mini{font-size:14px;color:var(--sub)}
+    .table{overflow:auto;background:#fff;border:1px solid #e5e7eb;border-radius:14px}
+    table{border-collapse:collapse;width:100%}
+    th,td{padding:12px 14px;border-bottom:1px solid #e5e7eb;vertical-align:top}
+    th{background:#f8fafc;text-align:left}
+    code{background:#eef2ff;padding:2px 6px;border-radius:6px;font-size:90%}
+    pre{background:#0f172a;color:#e5e7eb;padding:16px;border-radius:12px;overflow:auto}
+    .center{display:flex;justify-content:center}
+    svg{max-width:100%;height:auto;background:#fff;border:1px solid #e5e7eb;border-radius:16px;box-shadow:0 6px 14px rgba(0,0,0,.04)}
+    .two{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    @media (max-width: 800px){.two{grid-template-columns:1fr} h1{font-size:28px} h2{font-size:24px}}
+    .pill{display:inline-block;background:var(--purple2);color:var(--purple);padding:4px 10px;border-radius:999px;font-size:13px;font-weight:700}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <div class="pill">新鮮人版</div>
+      <h1>FPGA 常見名詞一次學會</h1>
+      <p><strong>主題：</strong>CDC、STA、ILA / Logic Analyzer、Synthesis / Place &amp; Route、WNS = -0.25 ns、Verilog 跟 C 的差別、FPLD / CPLD 架構。</p>
+      <p>這份教材用<strong>新鮮人的口吻</strong>來教你。你可以把它當成「面試前速讀版」，先理解每個名詞是什麼、在做什麼、為什麼重要、面試時可以怎麼說。</p>
+      <div>
+        <span class="tag">適合硬體工程師轉職/面試</span>
+        <span class="tag">圖解</span>
+        <span class="tag">從直覺理解</span>
+        <span class="tag">可直接拿來複習</span>
+      </div>
+    </section>
+
+    <h2>1. 先建立大地圖：FPGA 開發流程</h2>
+    <div class="card">
+      <p>先不要一開始就背名詞，先看它們在整個流程中的位置：</p>
+      <div class="center">
+        <svg viewBox="0 0 1060 260" role="img" aria-label="FPGA flow diagram">
+          <defs>
+            <marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#64748b"/></marker>
+          </defs>
+          <rect x="24" y="80" width="140" height="70" rx="16" fill="#dbeafe" stroke="#2563eb"/>
+          <text x="94" y="112" text-anchor="middle" font-size="22" font-weight="700">Verilog / VHDL</text>
+          <text x="94" y="136" text-anchor="middle" font-size="14">寫 RTL 行為</text>
+
+          <rect x="208" y="80" width="140" height="70" rx="16" fill="#ede9fe" stroke="#7c3aed"/>
+          <text x="278" y="112" text-anchor="middle" font-size="22" font-weight="700">Synthesis</text>
+          <text x="278" y="136" text-anchor="middle" font-size="14">轉成邏輯閘/資源</text>
+
+          <rect x="392" y="80" width="160" height="70" rx="16" fill="#ffedd5" stroke="#d97706"/>
+          <text x="472" y="112" text-anchor="middle" font-size="22" font-weight="700">Place &amp; Route</text>
+          <text x="472" y="136" text-anchor="middle" font-size="14">擺放 + 佈線</text>
+
+          <rect x="596" y="80" width="140" height="70" rx="16" fill="#d1fae5" stroke="#059669"/>
+          <text x="666" y="112" text-anchor="middle" font-size="22" font-weight="700">STA</text>
+          <text x="666" y="136" text-anchor="middle" font-size="14">看 timing 有沒有過</text>
+
+          <rect x="780" y="80" width="120" height="70" rx="16" fill="#fee2e2" stroke="#dc2626"/>
+          <text x="840" y="112" text-anchor="middle" font-size="22" font-weight="700">Bitstream</text>
+          <text x="840" y="136" text-anchor="middle" font-size="14">下載到 FPGA</text>
+
+          <rect x="930" y="80" width="106" height="70" rx="16" fill="#f3f4f6" stroke="#64748b"/>
+          <text x="983" y="108" text-anchor="middle" font-size="20" font-weight="700">ILA</text>
+          <text x="983" y="132" text-anchor="middle" font-size="13">線上除錯</text>
+
+          <line x1="164" y1="115" x2="208" y2="115" stroke="#64748b" stroke-width="3" marker-end="url(#arr)"/>
+          <line x1="348" y1="115" x2="392" y2="115" stroke="#64748b" stroke-width="3" marker-end="url(#arr)"/>
+          <line x1="552" y1="115" x2="596" y2="115" stroke="#64748b" stroke-width="3" marker-end="url(#arr)"/>
+          <line x1="736" y1="115" x2="780" y2="115" stroke="#64748b" stroke-width="3" marker-end="url(#arr)"/>
+          <line x1="900" y1="115" x2="930" y2="115" stroke="#64748b" stroke-width="3" marker-end="url(#arr)"/>
+
+          <rect x="430" y="185" width="200" height="42" rx="12" fill="#eff6ff" stroke="#60a5fa"/>
+          <text x="530" y="211" text-anchor="middle" font-size="18" font-weight="700">CDC：跨時脈域設計檢查</text>
+        </svg>
+      </div>
+      <div class="tip"><strong>先用一句話記：</strong> 寫 Verilog → 綜合 → 擺放佈線 → 跑 timing → 下載到 FPGA → 用 ILA 抓內部訊號。CDC 是整個設計中一定要小心的「跨時脈」問題。</div>
+    </div>
+
+    <h2>2. CDC 是什麼？（Clock Domain Crossing）</h2>
+    <div class="two">
+      <div class="card">
+        <h3>直覺理解</h3>
+        <p>CDC 就是：<strong>訊號從一個 clock domain 跑到另一個 clock domain</strong>。</p>
+        <p>例如：</p>
+        <ul>
+          <li>模組 A 用 <code>clk_a = 100 MHz</code></li>
+          <li>模組 B 用 <code>clk_b = 125 MHz</code></li>
+          <li>A 要把訊號送給 B</li>
+        </ul>
+        <p>因為兩個時脈不同步，所以 B 取樣時，可能剛好碰到訊號切換中的不穩定區，這就可能產生 <strong>metastability（亞穩態）</strong>。</p>
+      </div>
+      <div class="card center">
+        <svg viewBox="0 0 520 300" aria-label="CDC diagram">
+          <defs>
+            <marker id="arr2" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#64748b"/></marker>
+          </defs>
+          <rect x="30" y="65" width="150" height="90" rx="16" fill="#dbeafe" stroke="#2563eb"/>
+          <text x="105" y="100" text-anchor="middle" font-size="22" font-weight="700">Domain A</text>
+          <text x="105" y="126" text-anchor="middle" font-size="16">clk_a = 100 MHz</text>
+          <text x="105" y="146" text-anchor="middle" font-size="14">訊號產生端</text>
+
+          <rect x="340" y="65" width="150" height="90" rx="16" fill="#d1fae5" stroke="#059669"/>
+          <text x="415" y="100" text-anchor="middle" font-size="22" font-weight="700">Domain B</text>
+          <text x="415" y="126" text-anchor="middle" font-size="16">clk_b = 125 MHz</text>
+          <text x="415" y="146" text-anchor="middle" font-size="14">訊號接收端</text>
+
+          <line x1="180" y1="110" x2="250" y2="110" stroke="#64748b" stroke-width="3" marker-end="url(#arr2)"/>
+          <rect x="250" y="80" width="70" height="60" rx="12" fill="#fee2e2" stroke="#dc2626"/>
+          <text x="285" y="105" text-anchor="middle" font-size="14" font-weight="700">危險區</text>
+          <text x="285" y="123" text-anchor="middle" font-size="13">Metastability</text>
+
+          <rect x="165" y="205" width="190" height="58" rx="12" fill="#ede9fe" stroke="#7c3aed"/>
+          <text x="260" y="228" text-anchor="middle" font-size="16" font-weight="700">常見解法</text>
+          <text x="260" y="248" text-anchor="middle" font-size="14">2-FF Synchronizer / Async FIFO</text>
+        </svg>
+      </div>
+    </div>
+    <div class="card">
+      <h3>新鮮人要懂的重點</h3>
+      <ul>
+        <li><strong>單 bit 訊號</strong>：常用 <code>2-FF synchronizer</code>。</li>
+        <li><strong>多 bit 資料</strong>：不能隨便每一 bit 各自同步，常要用 <code>handshake</code> 或 <code>async FIFO</code>。</li>
+        <li><strong>問題本質</strong>：不是功能邏輯寫錯，而是時序與取樣關係有風險。</li>
+      </ul>
+      <div class="good"><strong>面試可以這樣說：</strong><br/>「CDC 是跨時脈域傳輸問題。若不同 clock domain 直接傳訊號，接收端可能出現 metastability。單 bit 通常用 2 級 FF 同步，多 bit 或資料流通常用 handshake 或 async FIFO。」</div>
+    </div>
+
+    <h2>3. STA 是什麼？（Static Timing Analysis）</h2>
+    <div class="card">
+      <p>STA 是不需要真的把資料跑起來，就直接用數學和網路延遲模型，去分析電路 timing 有沒有過。</p>
+      <div class="center">
+        <svg viewBox="0 0 920 260" aria-label="STA diagram">
+          <rect x="35" y="95" width="120" height="72" rx="16" fill="#dbeafe" stroke="#2563eb"/>
+          <text x="95" y="122" text-anchor="middle" font-size="22" font-weight="700">FF1</text>
+          <text x="95" y="144" text-anchor="middle" font-size="14">launch</text>
+
+          <rect x="290" y="95" width="165" height="72" rx="16" fill="#ffedd5" stroke="#d97706"/>
+          <text x="372" y="122" text-anchor="middle" font-size="22" font-weight="700">Combinational</text>
+          <text x="372" y="144" text-anchor="middle" font-size="14">logic delay</text>
+
+          <rect x="585" y="95" width="120" height="72" rx="16" fill="#d1fae5" stroke="#059669"/>
+          <text x="645" y="122" text-anchor="middle" font-size="22" font-weight="700">FF2</text>
+          <text x="645" y="144" text-anchor="middle" font-size="14">capture</text>
+
+          <line x1="155" y1="131" x2="290" y2="131" stroke="#64748b" stroke-width="4"/>
+          <line x1="455" y1="131" x2="585" y2="131" stroke="#64748b" stroke-width="4"/>
+
+          <text x="373" y="70" text-anchor="middle" font-size="20" font-weight="700">資料必須在下一個時脈來之前到達 FF2</text>
+          <rect x="720" y="86" width="170" height="90" rx="12" fill="#eff6ff" stroke="#60a5fa"/>
+          <text x="805" y="112" text-anchor="middle" font-size="16" font-weight="700">檢查兩件事</text>
+          <text x="805" y="136" text-anchor="middle" font-size="14">1. Setup time</text>
+          <text x="805" y="157" text-anchor="middle" font-size="14">2. Hold time</text>
+        </svg>
+      </div>
+      <h3>最常聽到的兩個 timing</h3>
+      <ul>
+        <li><strong>Setup</strong>：資料要夠早到，不能太晚。</li>
+        <li><strong>Hold</strong>：資料到達後，要撐一下，不能太快變。</li>
+      </ul>
+      <div class="tip"><strong>一句話：</strong> STA 就是在確認「資料是否能在正確的時間被正確抓到」。</div>
+      <div class="good"><strong>面試可以這樣說：</strong><br/>「STA 主要是檢查寄存器到寄存器之間的 timing path，確認 setup 與 hold 是否滿足。若 setup 違反，代表資料太慢；若 hold 違反，代表資料太快。」</div>
+    </div>
+
+    <h2>4. WNS = -0.25 ns 代表什麼？</h2>
+    <div class="card">
+      <p><strong>WNS = Worst Negative Slack</strong>，也就是「最差那一條 timing path 的 slack」。</p>
+      <div class="grid">
+        <div class="card" style="background:#ecfdf5">
+          <h3>Slack &gt;= 0</h3>
+          <p>Timing 過關。</p>
+          <p>代表資料在規定時間內到達。</p>
+        </div>
+        <div class="card" style="background:#fef2f2">
+          <h3>Slack &lt; 0</h3>
+          <p>Timing 沒過。</p>
+          <p>代表資料晚到了。</p>
+        </div>
+      </div>
+      <div class="warn"><strong>WNS = -0.25 ns</strong> 的意思是：最差那條 path 比要求時間 <strong>晚了 0.25 ns</strong>。也就是說，目前設計存在 setup violation。</div>
+      <h3>可以怎麼理解？</h3>
+      <ul>
+        <li>要求 10.00 ns 內到</li>
+        <li>結果實際 10.25 ns 才到</li>
+        <li>所以 slack = -0.25 ns</li>
+      </ul>
+      <div class="center">
+        <svg viewBox="0 0 920 220" aria-label="WNS diagram">
+          <line x1="60" y1="110" x2="860" y2="110" stroke="#94a3b8" stroke-width="6"/>
+          <line x1="120" y1="85" x2="120" y2="135" stroke="#2563eb" stroke-width="4"/>
+          <text x="120" y="70" text-anchor="middle" font-size="15">launch</text>
+          <line x1="700" y1="85" x2="700" y2="135" stroke="#059669" stroke-width="4"/>
+          <text x="700" y="70" text-anchor="middle" font-size="15">required arrival = 10.00 ns</text>
+          <line x1="735" y1="85" x2="735" y2="135" stroke="#dc2626" stroke-width="4"/>
+          <text x="735" y="160" text-anchor="middle" font-size="15">actual arrival = 10.25 ns</text>
+          <line x1="700" y1="40" x2="735" y2="40" stroke="#dc2626" stroke-width="4"/>
+          <text x="717" y="28" text-anchor="middle" font-size="16" font-weight="700" fill="#dc2626">-0.25 ns</text>
+        </svg>
+      </div>
+      <h3>看到 WNS 負值時，常見改善方向</h3>
+      <ul>
+        <li>降低邏輯深度（logic 太深）</li>
+        <li>加 pipeline</li>
+        <li>改善 placement / routing</li>
+        <li>修改 timing constraints</li>
+        <li>確認 false path / multicycle path 是否正確</li>
+      </ul>
+      <div class="good"><strong>面試回答範例：</strong><br/>「WNS = -0.25 ns 代表最差 path 有 0.25 ns 的 setup violation。我會先看是 logic delay 還是 routing delay 造成，再決定是否加 pipeline、簡化邏輯，或檢查 constraints 是否合理。」</div>
+    </div>
+
+    <h2>5. ILA / Logic Analyzer 是什麼？</h2>
+    <div class="two">
+      <div class="card">
+        <p><strong>ILA</strong> 常見於 Xilinx / AMD FPGA，意思是 <strong>Integrated Logic Analyzer</strong>。</p>
+        <p>你可以把它想成：<strong>放在 FPGA 裡面的示波器/邏輯分析儀</strong>。</p>
+        <ul>
+          <li>抓內部訊號</li>
+          <li>設定 trigger 條件</li>
+          <li>看狀態機有沒有跳對</li>
+          <li>看資料流、valid/ready、error flag</li>
+        </ul>
+        <p>Logic Analyzer 是比較大範圍的名詞，ILA 是 FPGA 裡面常用的內建版本。</p>
+      </div>
+      <div class="card center">
+        <svg viewBox="0 0 520 280" aria-label="ILA diagram">
+          <rect x="55" y="35" width="410" height="175" rx="18" fill="#eef2ff" stroke="#7c3aed" stroke-width="2"/>
+          <text x="260" y="68" text-anchor="middle" font-size="26" font-weight="700">FPGA</text>
+          <rect x="90" y="105" width="135" height="70" rx="14" fill="#dbeafe" stroke="#2563eb"/>
+          <text x="157" y="135" text-anchor="middle" font-size="20" font-weight="700">你的設計</text>
+          <text x="157" y="157" text-anchor="middle" font-size="14">FSM / Counter / Bus</text>
+          <rect x="300" y="105" width="120" height="70" rx="14" fill="#fee2e2" stroke="#dc2626"/>
+          <text x="360" y="134" text-anchor="middle" font-size="22" font-weight="700">ILA</text>
+          <text x="360" y="156" text-anchor="middle" font-size="14">抓內部訊號</text>
+          <line x1="225" y1="140" x2="300" y2="140" stroke="#64748b" stroke-width="4"/>
+          <rect x="165" y="226" width="190" height="34" rx="10" fill="#ecfdf5" stroke="#10b981"/>
+          <text x="260" y="248" text-anchor="middle" font-size="14">透過 JTAG / 工具讀取波形</text>
+        </svg>
+      </div>
+    </div>
+    <div class="good"><strong>面試可以這樣說：</strong><br/>「當模擬看起來正常，但板上行為不如預期時，我會插入 ILA 觀察內部訊號，例如 state、counter、handshake 訊號，透過 trigger 去抓問題發生前後的波形。」</div>
+
+    <h2>6. Synthesis / Place &amp; Route 是什麼？</h2>
+    <div class="grid">
+      <div class="card">
+        <h3>Synthesis（綜合）</h3>
+        <p>把你寫的 RTL（Verilog/VHDL）轉成實際硬體資源的表示方式，例如：</p>
+        <ul>
+          <li>LUT</li>
+          <li>FF（Flip-Flop）</li>
+          <li>BRAM</li>
+          <li>DSP</li>
+        </ul>
+        <p>簡單講：<strong>從程式描述 → 硬體邏輯結構</strong></p>
+      </div>
+      <div class="card">
+        <h3>Place &amp; Route（布局繞線）</h3>
+        <p>綜合後，工具要決定：</p>
+        <ul>
+          <li>這些邏輯放在晶片哪個位置（Place）</li>
+          <li>彼此之間怎麼接線（Route）</li>
+        </ul>
+        <p>簡單講：<strong>把抽象邏輯真的放進晶片地圖裡</strong></p>
+      </div>
+    </div>
+    <div class="center" style="margin-top:14px;">
+      <svg viewBox="0 0 930 260" aria-label="Synthesis vs PnR diagram">
+        <rect x="40" y="74" width="220" height="110" rx="18" fill="#eef2ff" stroke="#6366f1"/>
+        <text x="150" y="110" text-anchor="middle" font-size="25" font-weight="700">RTL Code</text>
+        <text x="150" y="138" text-anchor="middle" font-size="16">always / if / case / reg / wire</text>
+
+        <rect x="360" y="74" width="220" height="110" rx="18" fill="#ffedd5" stroke="#d97706"/>
+        <text x="470" y="110" text-anchor="middle" font-size="25" font-weight="700">Synthesis</text>
+        <text x="470" y="138" text-anchor="middle" font-size="16">LUT / FF / BRAM / DSP</text>
+
+        <rect x="680" y="58" width="210" height="140" rx="18" fill="#ecfdf5" stroke="#10b981"/>
+        <rect x="712" y="88" width="28" height="28" fill="#93c5fd"/>
+        <rect x="760" y="136" width="28" height="28" fill="#fca5a5"/>
+        <rect x="820" y="96" width="28" height="28" fill="#86efac"/>
+        <line x1="740" y1="102" x2="820" y2="110" stroke="#64748b" stroke-width="3"/>
+        <line x1="788" y1="150" x2="820" y2="124" stroke="#64748b" stroke-width="3"/>
+        <text x="785" y="72" text-anchor="middle" font-size="25" font-weight="700">Place &amp; Route</text>
+        <text x="785" y="188" text-anchor="middle" font-size="16">放位置 + 拉線</text>
+
+        <line x1="260" y1="129" x2="360" y2="129" stroke="#64748b" stroke-width="4"/>
+        <line x1="580" y1="129" x2="680" y2="129" stroke="#64748b" stroke-width="4"/>
+      </svg>
+    </div>
+
+    <h2>7. Verilog 跟 C 很像嗎？</h2>
+    <div class="card">
+      <p><strong>像的地方：</strong>語法看起來有些像，例如 <code>if</code>、<code>case</code>、<code>for</code>、運算子、模組化。</p>
+      <p><strong>不一樣的地方更重要：</strong></p>
+      <div class="table">
+        <table>
+          <thead>
+            <tr><th>項目</th><th>C</th><th>Verilog</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>本質</td><td>軟體程式</td><td>硬體描述語言（HDL）</td></tr>
+            <tr><td>執行方式</td><td>大多是依序執行</td><td>很多邏輯是同時並行運作</td></tr>
+            <tr><td>變數概念</td><td>記憶體裡的資料</td><td>常代表線路、暫存器、觸發器</td></tr>
+            <tr><td>時間概念</td><td>通常不直接描述硬體時序</td><td>時脈、edge、delay、timing 很重要</td></tr>
+            <tr><td>產出</td><td>可執行程式</td><td>可對應成邏輯電路</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h3>最關鍵的一句話</h3>
+      <div class="tip">C 是在「告訴 CPU 要一步一步做什麼」；Verilog 是在「描述硬體本身要長什麼樣、如何在時脈下運作」。</div>
+      <pre><code>// Verilog 範例：每個 clock 邊緣加 1
+always @(posedge clk or negedge rst_n) begin
+  if (!rst_n)
+    cnt &lt;= 4'd0;
+  else
+    cnt &lt;= cnt + 1'b1;
+end</code></pre>
+      <div class="good"><strong>面試可以這樣說：</strong><br/>「我大學有寫過 Verilog，語法上和 C 有些相似，但概念上不同。C 偏向依序執行的軟體，Verilog 是描述硬體並行行為與時脈驅動邏輯，尤其對時序和寄存器概念要更敏感。」</div>
+    </div>
+
+    <h2>8. FPLD / CPLD 目前有哪些架構？</h2>
+    <div class="card">
+      <p>這裡先釐清一下：</p>
+      <ul>
+        <li><strong>PLD</strong> = Programmable Logic Device，可程式化邏輯元件</li>
+        <li><strong>FPLD</strong> = Field-Programmable Logic Device，現場可重複設定的邏輯元件，算是比較大的總稱</li>
+        <li><strong>CPLD</strong> = Complex Programmable Logic Device</li>
+        <li><strong>FPGA</strong> 也是 FPLD 家族的一種，但通常規模更大、更彈性</li>
+      </ul>
+      <div class="center">
+        <svg viewBox="0 0 980 300" aria-label="PLD family diagram">
+          <rect x="380" y="20" width="220" height="60" rx="16" fill="#dbeafe" stroke="#2563eb"/>
+          <text x="490" y="56" text-anchor="middle" font-size="28" font-weight="700">PLD / FPLD</text>
+
+          <line x1="490" y1="80" x2="250" y2="130" stroke="#64748b" stroke-width="3"/>
+          <line x1="490" y1="80" x2="730" y2="130" stroke="#64748b" stroke-width="3"/>
+
+          <rect x="120" y="130" width="260" height="130" rx="18" fill="#ffedd5" stroke="#d97706"/>
+          <text x="250" y="165" text-anchor="middle" font-size="28" font-weight="700">CPLD</text>
+          <text x="250" y="195" text-anchor="middle" font-size="17">較少量的大型 macrocell</text>
+          <text x="250" y="218" text-anchor="middle" font-size="17">非揮發設定常見</text>
+          <text x="250" y="241" text-anchor="middle" font-size="17">控制邏輯、Glue Logic</text>
+
+          <rect x="600" y="130" width="260" height="130" rx="18" fill="#ecfdf5" stroke="#10b981"/>
+          <text x="730" y="165" text-anchor="middle" font-size="28" font-weight="700">FPGA</text>
+          <text x="730" y="195" text-anchor="middle" font-size="17">大量 LUT + FF + BRAM + DSP</text>
+          <text x="730" y="218" text-anchor="middle" font-size="17">彈性高，規模大</text>
+          <text x="730" y="241" text-anchor="middle" font-size="17">資料路徑、影像、AI、通訊</text>
+        </svg>
+      </div>
+      <h3>CPLD 的典型架構</h3>
+      <ul>
+        <li><strong>Macrocell-based</strong> 架構</li>
+        <li>由多個 <strong>Function Block / Logic Block</strong> 組成</li>
+        <li>每個 block 裡有多個 <strong>macrocell</strong></li>
+        <li>透過可程式化 interconnect 連接</li>
+      </ul>
+      <div class="center">
+        <svg viewBox="0 0 900 300" aria-label="CPLD architecture diagram">
+          <rect x="40" y="35" width="820" height="230" rx="18" fill="#fff" stroke="#cbd5e1" stroke-width="2"/>
+          <text x="450" y="65" text-anchor="middle" font-size="27" font-weight="700">CPLD 架構概念</text>
+          <rect x="85" y="100" width="190" height="120" rx="14" fill="#ffedd5" stroke="#d97706"/>
+          <text x="180" y="126" text-anchor="middle" font-size="20" font-weight="700">Function Block A</text>
+          <rect x="110" y="145" width="48" height="40" fill="#fff7ed" stroke="#fb923c"/>
+          <rect x="168" y="145" width="48" height="40" fill="#fff7ed" stroke="#fb923c"/>
+          <rect x="226" y="145" width="48" height="40" fill="#fff7ed" stroke="#fb923c"/>
+          <text x="180" y="204" text-anchor="middle" font-size="14">macrocells</text>
+
+          <rect x="355" y="100" width="190" height="120" rx="14" fill="#eff6ff" stroke="#2563eb"/>
+          <text x="450" y="126" text-anchor="middle" font-size="20" font-weight="700">Programmable</text>
+          <text x="450" y="148" text-anchor="middle" font-size="20" font-weight="700">Interconnect</text>
+          <text x="450" y="178" text-anchor="middle" font-size="14">把不同 blocks 串起來</text>
+
+          <rect x="625" y="100" width="190" height="120" rx="14" fill="#ffedd5" stroke="#d97706"/>
+          <text x="720" y="126" text-anchor="middle" font-size="20" font-weight="700">Function Block B</text>
+          <rect x="650" y="145" width="48" height="40" fill="#fff7ed" stroke="#fb923c"/>
+          <rect x="708" y="145" width="48" height="40" fill="#fff7ed" stroke="#fb923c"/>
+          <rect x="766" y="145" width="48" height="40" fill="#fff7ed" stroke="#fb923c"/>
+          <text x="720" y="204" text-anchor="middle" font-size="14">macrocells</text>
+        </svg>
+      </div>
+      <h3>FPGA 的典型架構</h3>
+      <ul>
+        <li><strong>LUT-based</strong> 邏輯陣列</li>
+        <li>搭配 <strong>Flip-Flop</strong></li>
+        <li>外加 <strong>Block RAM、DSP、Clock 管理、IO Block</strong></li>
+      </ul>
+      <div class="tip">如果面試官問「目前有哪些架構」，新鮮人層級不用背很細的供應商家族名稱，知道 <strong>CPLD 偏 macrocell</strong>、<strong>FPGA 偏 LUT/FF + 豐富資源</strong> 就很夠用了。</div>
+    </div>
+
+    <h2>9. 新鮮人面試怎麼講，才像真的懂？</h2>
+    <div class="card">
+      <h3>你可以用這種口吻</h3>
+      <div class="good">
+        「我大學時有接觸過 Verilog，知道它雖然語法有點像 C，但本質上是在描述硬體行為。對 FPGA flow 我理解是：先寫 RTL，之後做 synthesis，再進到 place &amp; route，最後用 STA 檢查 timing。若 timing report 顯示 WNS 為負值，例如 -0.25 ns，代表最差路徑有 setup violation。若板上除錯時遇到模擬正常、實機異常，我知道可以用 ILA 去抓內部訊號。另外，若設計有跨時脈域，就要注意 CDC 問題，單 bit 一般會用 synchronizer，多 bit 可能用 async FIFO 或 handshake。」
+      </div>
+      <h3>這樣講會加分，因為它有三個特點</h3>
+      <ol>
+        <li>不是只背名詞，而是知道名詞在流程中的位置</li>
+        <li>知道每個問題的風險點，例如 CDC、timing violation</li>
+        <li>知道遇到問題時可以怎麼 debug</li>
+      </ol>
+    </div>
+
+    <h2>10. 快速複習表</h2>
+    <div class="table">
+      <table>
+        <thead>
+          <tr><th>名詞</th><th>你可以怎麼理解</th><th>面試一句話版</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>CDC</td><td>跨時脈域傳輸</td><td>不同 clock domain 間傳訊號，要防 metastability。</td></tr>
+          <tr><td>STA</td><td>靜態時序分析</td><td>檢查 setup / hold 是否滿足。</td></tr>
+          <tr><td>ILA</td><td>FPGA 內建邏輯分析儀</td><td>用來抓 FPGA 內部訊號除錯。</td></tr>
+          <tr><td>Synthesis</td><td>RTL 轉硬體資源</td><td>把 Verilog 轉成 LUT/FF/BRAM/DSP。</td></tr>
+          <tr><td>Place &amp; Route</td><td>擺位置和接線</td><td>把邏輯實際放進 FPGA 並完成佈線。</td></tr>
+          <tr><td>WNS = -0.25 ns</td><td>最差 path 晚了 0.25 ns</td><td>表示存在 setup violation。</td></tr>
+          <tr><td>Verilog</td><td>硬體描述語言</td><td>語法像 C，但本質是描述並行硬體。</td></tr>
+          <tr><td>CPLD</td><td>macrocell 架構</td><td>適合控制邏輯、較小型整合。</td></tr>
+          <tr><td>FPGA</td><td>LUT/FF 為主的大型可程式邏輯</td><td>資源多、彈性高、可做複雜設計。</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>11. 給你的最後建議</h2>
+    <div class="card">
+      <ul>
+        <li>新鮮人不用裝得很資深，<strong>重點是講清楚邏輯</strong>。</li>
+        <li>會比名詞更重要的是：<strong>你知道為什麼會出問題、出問題怎麼找</strong>。</li>
+        <li>你可以不用說「我很熟」，你可以說：「我有學過、理解原理、願意快速補強」。這樣更自然。</li>
+      </ul>
+      <div class="tip"><strong>最安全的面試策略：</strong>「我目前是新鮮人程度，但我能清楚說明整個 FPGA flow，知道 timing / CDC / debug 的基本觀念，也知道我下一步該怎麼學。」</div>
+    </div>
+
+    <div class="mini" style="margin:26px 0 50px; text-align:center;">HTML 教材完成。可直接用瀏覽器開啟，適合複習與面試前閱讀。</div>
+  </div>
+</body>
+</html>
