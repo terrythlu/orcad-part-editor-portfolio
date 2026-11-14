@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RTL・Setup Time・CPLD Macrocell・FPGA LUT/FF｜圖解入門</title>
+<style>
+:root{--bg:#f3f6fc;--ink:#17233b;--muted:#52637a;--line:#dae3f1;--navy:#14294b;--blue:#1d65d6;--cyan:#18a6bc;--green:#168360;--orange:#c8791b;--red:#c43c4a;--purple:#7853bf;--card:#fff}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC","Microsoft JhengHei",Arial,sans-serif;color:var(--ink);line-height:1.8}a{color:var(--blue)}.page{max-width:1040px;margin:auto;padding:16px 16px 70px}.hero{background:linear-gradient(120deg,#102645,#214989);color:#fff;border-radius:24px;padding:34px 30px;margin:14px 0 19px;box-shadow:0 16px 36px #1a3b6e22}.eyebrow{letter-spacing:2px;font-size:13px;color:#b7d7ff;font-weight:700}.hero h1{font-size:clamp(28px,4.8vw,46px);line-height:1.3;margin:10px 0 12px}.hero p{color:#e2efff;max-width:810px;font-size:17px}.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px}.chips span{border:1px solid #ffffff55;background:#ffffff14;padding:4px 12px;border-radius:40px;font-size:13px}.nav{display:flex;gap:9px;flex-wrap:wrap;margin:16px 0 22px}.nav a{background:white;border:1px solid var(--line);border-radius:10px;padding:9px 12px;text-decoration:none;font-weight:700;font-size:14px}.section{background:white;border:1px solid var(--line);border-radius:21px;padding:24px;margin:22px 0;box-shadow:0 7px 20px #223b6210}.kicker{font-size:12px;color:var(--blue);font-weight:800;letter-spacing:2px}.section h2{font-size:clamp(23px,3.2vw,31px);line-height:1.4;margin:7px 0 12px}.section h3{font-size:19px;margin:22px 0 8px}.lead{font-size:18px}.muted{color:var(--muted)}.tag{display:inline-block;border-radius:8px;background:#eaf3ff;color:#1457ae;padding:2px 9px;font-weight:800;font-size:13px}.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px;margin:15px 0}.panel{border:1px solid var(--line);background:#f9fbff;border-radius:14px;padding:16px}.panel p:last-child{margin-bottom:0}.callout{margin:15px 0;border-left:5px solid var(--blue);background:#edf5ff;border-radius:0 12px 12px 0;padding:13px 16px}.callout.green{background:#eaf9f2;border-color:var(--green)}.callout.red{background:#fff1f1;border-color:var(--red)}.callout.orange{background:#fff7e8;border-color:var(--orange)}.diagram{border:1px solid var(--line);border-radius:15px;background:#fafdff;overflow-x:auto;margin:16px 0;padding:9px}.diagram svg{display:block;min-width:640px;width:100%;height:auto}.diagram.narrow svg{min-width:500px}.caption{font-size:13px;color:var(--muted);text-align:center;margin-top:6px}svg text{font-family:Arial,"Noto Sans TC","Microsoft JhengHei",sans-serif}.step{display:inline-flex;width:29px;height:29px;align-items:center;justify-content:center;border-radius:9px;background:#1d65d6;color:white;margin-right:7px;font-size:15px}.large{font-weight:800;font-size:22px}.code{background:#0e1c32;color:#d8e8ff;border-radius:14px;padding:18px;overflow-x:auto;font:14px/1.65 ui-monospace,Consolas,"Courier New",monospace}.code .c{color:#80ba9b}.code .k{color:#84b9ff}.pill{font-size:12px;padding:4px 9px;border-radius:50px;font-weight:700;background:#e8f2ff;color:var(--blue)}.control{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin:14px 0}.control label{font-weight:700}.control input[type=range]{width:260px;max-width:100%;accent-color:var(--blue)}.result{font-size:17px;font-weight:800;padding:10px 14px;border-radius:12px;background:#fff1f1;color:var(--red)}.result.pass{background:#e6f7f0;color:var(--green)}.switches{display:flex;gap:18px;align-items:center;flex-wrap:wrap}.switch{display:flex;gap:7px;align-items:center;background:#edf5ff;padding:9px 12px;border-radius:12px;font-weight:800}.switch input{width:22px;height:22px;accent-color:var(--blue)}.led{display:inline-block;width:17px;height:17px;border-radius:100%;background:#aeb9c8;box-shadow:inset 0 0 0 2px #0001;vertical-align:middle;margin:0 5px}.led.on{background:#11be7d;box-shadow:0 0 0 5px #b9f6dc,0 0 15px #20be8a}.bigvalue{font-size:25px;font-weight:800;color:var(--blue)}button{font-family:inherit;background:var(--blue);color:white;border:0;border-radius:10px;padding:10px 16px;font-weight:800;font-size:15px;cursor:pointer}button:active{transform:scale(.98)}table{border-collapse:collapse;width:100%;font-size:14px;min-width:550px}th,td{border-bottom:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}th{background:#eaf3ff;color:#143e79}.scroll-table{overflow-x:auto;border:1px solid var(--line);border-radius:12px}.quiz details{margin:10px 0;border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:#f7faff}.quiz summary{font-weight:800;cursor:pointer}.sources a{overflow-wrap:anywhere}.sources li{padding:5px 0}.footer{text-align:center;color:var(--muted);font-size:13px;margin:25px 0}.small{font-size:13px}.em{font-weight:800;color:#1150a8}ul,ol{padding-left:23px}li{margin:4px 0}@media(max-width:730px){.page{padding:9px 10px 55px}.hero{padding:23px 20px;border-radius:18px}.hero p{font-size:15px}.section{padding:19px 14px;border-radius:17px}.two{grid-template-columns:1fr}.diagram svg{min-width:580px}.code{font-size:12px;padding:13px}.nav a{font-size:12px;padding:7px 9px}.lead{font-size:16px}}
+</style>
+</head>
+<body>
+<div class="page">
+<header class="hero">
+<div class="eyebrow">HARDWARE INTERVIEW · 零基礎圖解教學</div>
+<h1>把 RTL、Setup Time、Macrocell、LUT/FF 一次搞懂</h1>
+<p>如果你大學寫過 Verilog，卻忘了 FPGA 裡面到底長什麼樣，這份教材就從「一個燈號」開始教。重點不是背縮寫，而是看懂<strong>程式如何變成電路、資料如何被 clock 抓住、CPLD 和 FPGA 的邏輯元件差在哪裡</strong>。</p>
+<div class="chips"><span>RTL 圖解</span><span>Setup 時間軸</span><span>可操作的時間違反模擬</span><span>Macrocell 內部電路</span><span>LUT + FF 互動</span><span>面試回答模板</span></div>
+</header>
+<nav class="nav" aria-label="章節捷徑"><a href="#map">先看全貌</a><a href="#rtl">1. RTL</a><a href="#setup">2. Setup Time</a><a href="#macro">3. CPLD Macrocell</a><a href="#lut">4. FPGA LUT/FF</a><a href="#compare">5. 比較與面試</a></nav>
+
+<section class="section" id="map">
+<div class="kicker">先看大地圖</div><h2>先建立腦中的一張圖</h2>
+<p class="lead">先把 FPGA 想像成一座「可以重接線的電子積木工廠」。Verilog/RTL 是設計圖；綜合工具把設計圖翻譯成邏輯積木；電路接好後，再檢查資料有沒有準時到。</p>
+<div class="diagram"><svg viewBox="0 0 920 220" role="img" aria-label="從 Verilog RTL 到電路資源以及 timing 檢查的流程">
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 Z" fill="#7f94b0"/></marker></defs>
+<rect x="24" y="55" width="168" height="95" rx="14" fill="#e8f1ff" stroke="#5593e6" stroke-width="2"/><text x="108" y="92" font-size="24" text-anchor="middle" font-weight="700" fill="#164d96">Verilog</text><text x="108" y="118" font-size="16" text-anchor="middle">RTL 描述</text>
+<path d="M192 103 H251" stroke="#7f94b0" stroke-width="4" marker-end="url(#arrow)"/>
+<rect x="255" y="55" width="174" height="95" rx="14" fill="#f0eaff" stroke="#9069d7" stroke-width="2"/><text x="342" y="92" font-size="23" text-anchor="middle" font-weight="700" fill="#6946a4">Synthesis</text><text x="342" y="118" font-size="16" text-anchor="middle">合成 / 綜合</text>
+<path d="M429 103 H480" stroke="#7f94b0" stroke-width="4" marker-end="url(#arrow)"/>
+<rect x="484" y="55" width="178" height="95" rx="14" fill="#e7f9f3" stroke="#4cb68e" stroke-width="2"/><text x="573" y="92" font-size="22" text-anchor="middle" font-weight="700" fill="#187955">LUT / FF</text><text x="573" y="118" font-size="16" text-anchor="middle">實際邏輯電路</text>
+<path d="M662 103 H714" stroke="#7f94b0" stroke-width="4" marker-end="url(#arrow)"/>
+<rect x="718" y="55" width="172" height="95" rx="14" fill="#fff2e6" stroke="#dc934b" stroke-width="2"/><text x="804" y="92" font-size="23" text-anchor="middle" font-weight="700" fill="#ab601b">STA</text><text x="804" y="118" font-size="16" text-anchor="middle">檢查 Setup / Hold</text>
+<text x="454" y="188" font-size="16" fill="#52637a" text-anchor="middle">重點：RTL 是描述方式；LUT、FF 是實際硬體；Setup 是時脈下的規則。</text>
+</svg></div>
+<div class="callout"><strong>用一句話串起來：</strong>「我用 RTL 描述暫存器與邏輯，合成後映射成 LUT/FF 等資源，再用 timing analysis 確認資料到達 FF 時不會違反 setup / hold。」</div>
+</section>
+
+<section class="section" id="rtl">
+<div class="kicker">01 · 設計圖</div><h2>RTL 是什麼？它跟 Verilog 差在哪裡？</h2>
+<div class="two"><div class="panel"><span class="tag">RTL = Register Transfer Level</span><p><strong>翻成白話：</strong>描述資料在「暫存器（Register）」之間如何移動、如何經過邏輯運算，以及什麼時候更新。</p><p>可以把每一個暫存器想成<strong>有快門的照相機</strong>，只有 clock 指定的瞬間才把目前的值拍下來。</p></div><div class="panel"><span class="tag">Verilog = 寫法 / 語言</span><p>Verilog 是硬體描述語言（HDL）；RTL 是一種<strong>設計抽象層級</strong>。</p><p>你可以用 Verilog、SystemVerilog 或 VHDL 來寫 RTL。<strong>不是所有 Verilog 程式都能合成成電路</strong>，例如模擬用的延遲語法。</p></div></div>
+<h3>一張圖看懂：一個 clock，把資料從 FF1 送到 FF2</h3>
+<div class="diagram"><svg viewBox="0 0 920 290" role="img" aria-label="FF1 經過組合邏輯後進入 FF2，clock 同時控制兩個暫存器">
+<rect x="80" y="78" width="158" height="110" rx="15" fill="#e4f0ff" stroke="#2f74d9" stroke-width="3"/><text x="159" y="119" text-anchor="middle" font-size="26" font-weight="700" fill="#194c93">FF1</text><text x="159" y="149" text-anchor="middle" font-size="16">先記住資料</text>
+<rect x="376" y="78" width="168" height="110" rx="15" fill="#fff0da" stroke="#d58a2b" stroke-width="3"/><text x="460" y="118" text-anchor="middle" font-size="23" font-weight="700">AND / OR</text><text x="460" y="150" text-anchor="middle" font-size="16">組合邏輯</text>
+<rect x="682" y="78" width="158" height="110" rx="15" fill="#e9f9ee" stroke="#2a9869" stroke-width="3"/><text x="761" y="119" text-anchor="middle" font-size="26" font-weight="700" fill="#147950">FF2</text><text x="761" y="149" text-anchor="middle" font-size="16">下一拍抓資料</text>
+<path d="M238 132 H375 M545 132 H682" stroke="#516a87" stroke-width="5" fill="none" marker-end="url(#arrow)"/>
+<path d="M159 188 V240 H761 V188" stroke="#3774bc" stroke-width="3" fill="none"/><text x="459" y="261" font-size="20" text-anchor="middle" font-weight="700" fill="#235da4">同一個 Clock → 每一拍更新 FF</text>
+<text x="308" y="110" font-size="16" fill="#52637a" text-anchor="middle">Q →</text><text x="622" y="110" font-size="16" fill="#52637a" text-anchor="middle">→ D</text>
+</svg></div>
+<p>在 clock 邊緣，FF2 把「經過組合邏輯」的資料抓進來。這段資料路徑，就是後面要做 setup timing 檢查的主角。</p>
+<h3>大學寫過的 Verilog：這段程式會變成什麼？</h3>
+<pre class="code"><span class="c">// 兩個暫存器：a、b；一個 AND 邏輯</span>
+<span class="k">always @(posedge clk)</span> begin
+    a &lt;= input_data;    <span class="c">// clock 來時，a 抓輸入</span>
+    b &lt;= a &amp; enable;   <span class="c">// b 抓的是「舊的 a」與 enable 的結果</span>
+end</pre>
+<div class="callout orange"><strong>很重要：</strong><code>&lt;=</code> 是時序邏輯常用的 nonblocking assignment。上面兩行不是 C 語言那樣「先更新 a，再更新 b」。在同一個 clock 邊緣，a、b 會依照該邊緣前的值進行更新；所以 <code>b</code> 用的是<strong>上一拍的 a</strong>。</div>
+<div class="callout green"><strong>面試講法：</strong>「Verilog 是 HDL，RTL 是用它描述暫存器和暫存器之間的資料運算。跟 C 最大的差異，是硬體有並行邏輯和 clock 取樣的觀念。」</div>
+</section>
+
+<section class="section" id="setup">
+<div class="kicker">02 · 時間規則</div><h2>Setup Time 違反，究竟是什麼？</h2>
+<p class="lead">把 FF 想成<strong>拍照的相機</strong>。拍照前，物體要先站穩一小段時間；不能剛好在按快門前 0.01 秒才衝進鏡頭。</p>
+<div class="two"><div class="panel"><span class="tag">Setup Time</span><p>資料 D 必須在有效的 clock 邊緣<strong>之前</strong>，維持穩定至少一段時間。</p><p><strong>太晚到 → Setup violation。</strong></p></div><div class="panel"><span class="tag">Hold Time</span><p>資料 D 必須在有效的 clock 邊緣<strong>之後</strong>，再維持穩定一段時間。</p><p><strong>太早改變 → Hold violation。</strong></p></div></div>
+<h3>先看圖：綠色是可以抓到的安全資料；紅色代表太晚改變</h3>
+<div class="diagram"><svg viewBox="0 0 920 335" role="img" aria-label="Setup time 安全與違反示意圖，clock rising edge 在 x 650，取樣前 setup window">
+<rect x="510" y="34" width="140" height="258" fill="#fff0dc" opacity=".85"/><rect x="650" y="34" width="80" height="258" fill="#e9f9f2" opacity=".9"/>
+<path d="M50 88 H648 V45 H735 V88 H872" stroke="#235ba6" stroke-width="5" fill="none"/>
+<path d="M50 167 H320 V127 H870" stroke="#168360" stroke-width="5" fill="none"/>
+<path d="M50 245 H615 V205 H870" stroke="#d54b4e" stroke-width="5" fill="none"/>
+<line x1="650" y1="26" x2="650" y2="298" stroke="#172b4c" stroke-width="3" stroke-dasharray="7 6"/>
+<text x="60" y="54" font-size="18" font-weight="700">CLK</text><text x="60" y="137" font-size="18" font-weight="700" fill="#168360">D：準時</text><text x="60" y="215" font-size="18" font-weight="700" fill="#c43c4a">D：太晚</text>
+<text x="580" y="20" font-size="16" text-anchor="middle" fill="#a96b17" font-weight="700">Setup 窗口</text><text x="690" y="20" font-size="16" text-anchor="middle" fill="#168360" font-weight="700">Hold 窗口</text>
+<text x="650" y="319" font-size="16" text-anchor="middle" fill="#253c59">Clock 有效邊緣 / 拍照瞬間</text>
+<text x="338" y="157" font-size="14" fill="#168360">提早到，穩定夠久 → OK</text><text x="695" y="241" font-size="14" fill="#c43c4a">Setup 不足</text>
+</svg></div>
+<p class="small muted">這是示意波形，不代表任一 FPGA 的實際 setup/hold 規格。每個 FF 的數值要看器件 timing model。</p>
+<h3>自己動手試：資料越晚到，越容易違反 Setup</h3>
+<div class="panel">
+<p>以下用「範例 FF 的 setup time = 200 ps（0.20 ns）」模擬；拉動滑桿改變資料提前到達的時間。</p>
+<div class="control"><label for="lead">資料比 clock 提前：</label><input id="lead" type="range" min="0" max="500" value="100" step="10" aria-label="資料提前到達時間"><strong id="leadLabel">100 ps</strong></div>
+<div id="slackLabel" class="result" role="status">Slack = -100 ps，Setup 違反</div>
+<div class="diagram"><svg viewBox="0 0 920 210" role="img" aria-label="可調整資料到達時間的時序圖">
+<rect x="420" y="24" width="140" height="150" fill="#ffecda"/><line x1="560" y1="20" x2="560" y2="175" stroke="#344960" stroke-width="3" stroke-dasharray="6 5"/>
+<text x="490" y="18" text-anchor="middle" font-size="16" fill="#a96316">需要穩定 ≥ 200ps</text>
+<text x="40" y="74" font-size="20" font-weight="700">CLK</text><path d="M130 95 H559 V55 H850" stroke="#3563aa" stroke-width="5" fill="none"/>
+<text x="40" y="155" font-size="20" font-weight="700">D</text><path id="dataWave" d="M130 165 H490 V125 H850" stroke="#cb4655" stroke-width="5" fill="none"/>
+<line id="dataMarker" x1="490" y1="119" x2="490" y2="175" stroke="#cb4655" stroke-width="2" stroke-dasharray="4 5"/>
+<text x="560" y="200" font-size="16" text-anchor="middle">有效邊緣</text><text id="changeNote" x="490" y="112" text-anchor="middle" fill="#cb4655" font-size="16" font-weight="700">資料切換</text>
+</svg></div>
+<p class="small muted">這個滑桿只示範基本時間關係，實際 STA 還需考慮 clock-to-Q、組合邏輯延遲、routing、clock skew、uncertainty 等因素。</p>
+</div>
+<h3>WNS = -0.25 ns 跟 setup 的關係</h3>
+<p>假設某條需要被檢查的路徑，<strong>要求資料最晚 9.75 ns 抵達</strong>，但實際是 <strong>10.00 ns</strong> 才到：</p>
+<div class="panel"><span class="large">Slack = 9.75 − 10.00 = <span style="color:var(--red)">−0.25 ns</span></span><p>負值表示在這個 setup 檢查中<strong>晚了 0.25 ns</strong>。WNS 指的是整個 timing 報告中最糟糕的 setup slack（通常是多條路徑裡最負的一條）。</p></div>
+<div class="callout red"><strong>別弄混：</strong>「WNS = -0.25 ns」不是說 FF 的 setup time 是 -0.25 ns，而是<strong>實際到達時間比允許的最晚時間晚了 0.25 ns</strong>。違反可能造成錯誤取樣、亞穩態或不可靠運作；不代表每一拍都會失敗。</div>
+<div class="callout green"><strong>面試講法：</strong>「Setup violation 是 D 在有效 clock 邊緣前，沒有滿足 FF 要求的穩定時間。我會先找出 critical path，檢查邏輯延遲、布線延遲、clock skew 和約束，再考慮 pipeline 或改善邏輯。」</div>
+</section>
+
+<section class="section" id="macro">
+<div class="kicker">03 · CPLD 的典型積木</div><h2>Macrocell 到底是什麼？</h2>
+<p class="lead">把傳統 CPLD 的 <strong>macrocell 想成「一間小型邏輯工作室」</strong>：裡面有多個 AND 條件，能把它們用 OR 合起來，還可能內建 FF、輸出選擇及 enable 控制。</p>
+<h3>先從你熟悉的電路開始：Y = (A AND B) OR (B AND C)</h3>
+<div class="diagram"><svg viewBox="0 0 920 320" role="img" aria-label="CPLD macrocell 簡化結構，兩個 AND product terms 經 OR 之後可以直接輸出或經 FF">
+<rect x="24" y="32" width="870" height="255" rx="19" fill="#f7f2ff" stroke="#b69cd9" stroke-width="3"/><text x="45" y="64" font-size="22" font-weight="700" fill="#693eab">典型 Macrocell（概念簡化圖）</text>
+<rect x="160" y="85" width="180" height="66" rx="12" fill="#fff3de" stroke="#e7ad4c" stroke-width="2"/><text x="250" y="113" text-anchor="middle" font-size="20" font-weight="700">AND #1</text><text x="250" y="138" text-anchor="middle" font-size="17">A · B</text>
+<rect x="160" y="180" width="180" height="66" rx="12" fill="#fff3de" stroke="#e7ad4c" stroke-width="2"/><text x="250" y="208" text-anchor="middle" font-size="20" font-weight="700">AND #2</text><text x="250" y="233" text-anchor="middle" font-size="17">B · C</text>
+<rect x="416" y="130" width="108" height="80" rx="14" fill="#e4f1ff" stroke="#538ddd" stroke-width="2"/><text x="470" y="161" text-anchor="middle" font-size="24" font-weight="700">OR</text><text x="470" y="187" text-anchor="middle" font-size="16">#1 + #2</text>
+<rect x="601" y="145" width="110" height="64" rx="10" fill="#e8f7ef" stroke="#4bae86" stroke-width="2"/><text x="656" y="174" text-anchor="middle" font-size="20" font-weight="700">FF</text><text x="656" y="196" text-anchor="middle" font-size="14">可選記憶</text>
+<rect x="761" y="125" width="102" height="89" rx="12" fill="#e5eef9" stroke="#789fc8" stroke-width="2"/><text x="812" y="156" text-anchor="middle" font-size="20" font-weight="700">MUX</text><text x="812" y="181" text-anchor="middle" font-size="14">直通 / FF</text><text x="812" y="201" text-anchor="middle" font-size="14">→ I/O</text>
+<path d="M340 118 H380 V158 H415 M340 214 H379 V185 H415 M524 170 H601 M711 177 H760" stroke="#67839f" stroke-width="4" fill="none" marker-end="url(#arrow)"/>
+<path d="M540 169 V104 H812 V125" stroke="#aa7ad4" stroke-width="3" fill="none"/><text x="622" y="95" font-size="14" fill="#7853bf">也可不經 FF 直接輸出</text>
+<text x="80" y="114" font-size="17" fill="#804dab" text-anchor="middle">輸入</text><text x="80" y="137" font-size="17" fill="#804dab" text-anchor="middle">A / B / C</text><path d="M109 125 H159" stroke="#67839f" stroke-width="4"/>
+<text x="360" y="271" font-size="16" fill="#644a8e">Product terms = AND 產生的各項條件</text>
+</svg></div>
+<p>上面的兩個 AND 條件叫 <strong>product terms（積項）</strong>。多個積項用 OR 合併，叫 <strong>Sum of Products（SOP，積項和）</strong>。這是<strong>傳統 macrocell-based CPLD</strong>很常見的邏輯做法。</p>
+<div class="two"><div class="panel"><h3>Macrocell 可以做什麼？</h3><p>1. 算條件：例如 <code>A &amp; B</code>。<br>2. 合併條件：例如 <code>(A&amp;B)|(B&amp;C)</code>。<br>3. 視需要由內部 FF 記住輸出。<br>4. 連到 I/O 或其他 macrocell。</p></div><div class="panel"><h3>一整顆 CPLD 是怎麼組成？</h3><p>把許多宏單元接在一起，中間用<strong>可程式化連線矩陣</strong>分配訊號。它很適合板子的控制工作，例如 reset、power sequencing、chip enable、簡單狀態機。</p></div></div>
+<div class="diagram"><svg viewBox="0 0 920 245" role="img" aria-label="典型 CPLD 由多個 Macrocell 區塊經互連矩陣互連">
+<rect x="20" y="30" width="880" height="192" rx="15" fill="#faf6ff" stroke="#c7b3ea" stroke-width="2"/><text x="45" y="60" font-size="23" font-weight="700" fill="#724bad">典型 CPLD 晶片內部</text>
+<rect x="82" y="99" width="235" height="88" rx="12" fill="#eee3ff" stroke="#9270c7" stroke-width="2"/><text x="200" y="132" font-size="20" font-weight="700" text-anchor="middle">Logic Block A</text><text x="200" y="160" font-size="17" text-anchor="middle">MC × MC × MC × …</text>
+<rect x="351" y="90" width="218" height="106" rx="12" fill="#e6f0ff" stroke="#679cd9" stroke-width="2"/><text x="460" y="126" font-size="22" text-anchor="middle" font-weight="700">Interconnect</text><text x="460" y="154" font-size="18" text-anchor="middle">可程式化連線矩陣</text>
+<rect x="603" y="99" width="235" height="88" rx="12" fill="#eee3ff" stroke="#9270c7" stroke-width="2"/><text x="721" y="132" font-size="20" font-weight="700" text-anchor="middle">Logic Block B</text><text x="721" y="160" font-size="17" text-anchor="middle">MC × MC × MC × …</text>
+<path d="M317 143 H351 M569 143 H603" stroke="#67839f" stroke-width="4" fill="none"/>
+</svg></div>
+<div class="callout"><strong>面試講法：</strong>「傳統 CPLD 常用 macrocell-based 架構；macrocell 透過 product terms 組合邏輯，也可以接內建 FF，再利用可程式化互連矩陣串接多個 logic block。」</div>
+</section>
+
+<section class="section" id="lut">
+<div class="kicker">04 · FPGA 的典型積木</div><h2>LUT 和 FF 又是什麼？</h2>
+<h3>LUT = Look-Up Table = 查表做邏輯</h3>
+<p class="lead">想像你先把所有可能的輸入組合，以及對應的答案，全部寫在表格裡。輸入一進來，<strong>LUT 就直接查出答案</strong>。所以 LUT 是可以實現邏輯函數的一種電路資源。</p>
+<div class="two"><div class="panel"><h3>一個 2-input LUT 做 AND</h3><p>輸入 A、B，每個只有 0 或 1，總共有 <strong>4 種組合</strong>，所以只需要一張 4 列的表。</p><div class="scroll-table"><table style="min-width:260px"><thead><tr><th>A</th><th>B</th><th>Y = A AND B</th></tr></thead><tbody id="truth"><tr data-a="0" data-b="0"><td>0</td><td>0</td><td>0</td></tr><tr data-a="0" data-b="1"><td>0</td><td>1</td><td>0</td></tr><tr data-a="1" data-b="0"><td>1</td><td>0</td><td>0</td></tr><tr data-a="1" data-b="1"><td>1</td><td>1</td><td>1</td></tr></tbody></table></div></div><div class="panel"><h3>同一顆 LUT，也能變 OR、XOR…</h3><p>只要改變 LUT 內存的答案，LUT 就能做不同的邏輯。真實 FPGA 常見較大的 LUT（例如 4-input、6-input），能處理更多輸入。</p><p><strong>2-input LUT</strong> 只有 4 種輸入組合；<strong>6-input LUT</strong> 有 64 種。這裡用 LUT2 只是比較好懂。</p></div></div>
+<div class="diagram"><svg viewBox="0 0 920 248" role="img" aria-label="LUT 如何使用 A B 當位址，選出儲存好的 0 0 0 1 中的答案">
+<text x="80" y="65" font-size="21" font-weight="700" fill="#1b5aa9">輸入 A、B</text><path d="M156 85 H243" stroke="#67839f" stroke-width="5" marker-end="url(#arrow)"/>
+<rect x="250" y="34" width="392" height="181" rx="15" fill="#e9f3ff" stroke="#5e9edb" stroke-width="3"/><text x="446" y="66" font-size="24" font-weight="700" text-anchor="middle">LUT（像一張小型真值表）</text>
+<rect x="289" y="88" width="60" height="48" rx="7" fill="white" stroke="#9cb7d8"/><text x="319" y="118" text-anchor="middle" font-size="23">0</text>
+<rect x="360" y="88" width="60" height="48" rx="7" fill="white" stroke="#9cb7d8"/><text x="390" y="118" text-anchor="middle" font-size="23">0</text>
+<rect x="431" y="88" width="60" height="48" rx="7" fill="white" stroke="#9cb7d8"/><text x="461" y="118" text-anchor="middle" font-size="23">0</text>
+<rect x="502" y="88" width="60" height="48" rx="7" fill="#ceffe6" stroke="#44b78c"/><text x="532" y="118" text-anchor="middle" font-size="23">1</text>
+<text x="321" y="161" text-anchor="middle" font-size="15">00</text><text x="390" y="161" text-anchor="middle" font-size="15">01</text><text x="462" y="161" text-anchor="middle" font-size="15">10</text><text x="532" y="161" text-anchor="middle" font-size="15">11</text><text x="449" y="194" text-anchor="middle" font-size="17" fill="#32608f">按 A B 組合，選中其中一格</text>
+<path d="M642 120 H750" stroke="#67839f" stroke-width="5" marker-end="url(#arrow)"/><rect x="759" y="82" width="125" height="84" rx="14" fill="#e9f9ee" stroke="#68b99c" stroke-width="2"/><text x="821" y="118" text-anchor="middle" font-size="23" font-weight="700">Y 輸出</text><text x="821" y="148" text-anchor="middle" font-size="18">0 或 1</text>
+</svg></div>
+<h3>FF = Flip-Flop = 在 clock 邊緣記住 1 bit</h3>
+<p>如果說 LUT 像「計算機」，FF 就像「記憶格」。<strong>LUT 的輸出會隨 A/B 改變；FF 的 Q 則要等有效 clock 邊緣，才更新成當下 D 的值。</strong></p>
+<div class="diagram"><svg viewBox="0 0 920 230" role="img" aria-label="LUT 做組合邏輯，輸出 D 經過 FF 寫成 Q，clock 控制 FF">
+<rect x="94" y="47" width="200" height="103" rx="16" fill="#e7f2ff" stroke="#5592e0" stroke-width="3"/><text x="194" y="88" font-size="27" text-anchor="middle" font-weight="700" fill="#164d96">LUT</text><text x="194" y="120" font-size="17" text-anchor="middle">負責算出 D</text>
+<path d="M293 97 H480" stroke="#657e9a" stroke-width="5" fill="none" marker-end="url(#arrow)"/><text x="384" y="85" font-size="22" text-anchor="middle" font-weight="700">D</text>
+<rect x="489" y="47" width="200" height="103" rx="16" fill="#e6f9ef" stroke="#63b591" stroke-width="3"/><text x="589" y="88" font-size="27" text-anchor="middle" font-weight="700" fill="#167d59">FF</text><text x="589" y="120" font-size="17" text-anchor="middle">在 clock 抓 D</text>
+<path d="M689 97 H829" stroke="#657e9a" stroke-width="5" fill="none" marker-end="url(#arrow)"/><text x="763" y="85" font-size="22" text-anchor="middle" font-weight="700">Q</text>
+<path d="M589 205 V149" stroke="#b87a34" stroke-width="4" fill="none" marker-end="url(#arrow)"/><text x="531" y="206" font-size="21" font-weight="700" fill="#a06320">Clock ↑</text>
+</svg></div>
+<h3>實際操作：先改 A/B，再按 Clock</h3>
+<div class="panel"><p>下方把 <strong>LUT = A AND B</strong> 接到 <strong>FF 的 D 腳</strong>。請你先切換輸入，觀察 LUT 輸出；再按「送出 Clock」觀察 Q。</p>
+<div class="switches"><label class="switch"><input type="checkbox" id="inputA"> A = <span id="av">0</span></label><label class="switch"><input type="checkbox" id="inputB"> B = <span id="bv">0</span></label></div>
+<div class="two"><div class="panel"><span class="tag">LUT output / FF 的 D</span><p><span id="dlamp" class="led"></span><span id="dval" class="bigvalue">0</span></p><p class="small">只要 A/B 改變，就即時重新計算。</p></div><div class="panel"><span class="tag">FF output / Q</span><p><span id="qlamp" class="led"></span><span id="qval" class="bigvalue">0</span></p><p class="small">只有按下 Clock（模擬上升緣），才會更新。</p></div></div>
+<button id="clockbtn" type="button">送出 Clock ↑（讓 FF 抓一次 D）</button> <button id="resetbtn" type="button" style="background:#64748b">重設</button>
+<p class="small muted" id="ffstatus" role="status">目前 Q = 0。可以先把 A 和 B 都打開。</p>
+</div>
+<h3>FPGA 的「豐富資源」指什麼？</h3>
+<p>FPGA 晶片裡通常不只有 LUT/FF。你可以想像它是很多小運算單元、記憶體、乘法器、時脈電路、I/O 和連線網路組成的「大型可編輯電路城市」。</p>
+<div class="diagram"><svg viewBox="0 0 920 390" role="img" aria-label="FPGA 晶片內部配置概念，LUT FF邏輯陣列及 BRAM DSP Clock SerDes IO 等資源">
+<rect x="35" y="30" width="850" height="335" rx="21" fill="#f7fbff" stroke="#7798c5" stroke-width="3"/><text x="61" y="63" font-size="25" font-weight="700" fill="#194e8c">FPGA 晶片資源示意（不按實際比例）</text>
+<rect x="75" y="91" width="480" height="238" rx="14" fill="#e6f0ff" stroke="#82a7d9" stroke-width="2"/>
+<text x="315" y="117" text-anchor="middle" font-size="20" font-weight="700">可程式邏輯陣列 + Routing</text>
+<g fill="#fff" stroke="#80a6d7" stroke-width="1.8"><rect x="101" y="143" width="89" height="56" rx="7"/><rect x="209" y="143" width="89" height="56" rx="7"/><rect x="317" y="143" width="89" height="56" rx="7"/><rect x="425" y="143" width="89" height="56" rx="7"/><rect x="101" y="218" width="89" height="56" rx="7"/><rect x="209" y="218" width="89" height="56" rx="7"/><rect x="317" y="218" width="89" height="56" rx="7"/><rect x="425" y="218" width="89" height="56" rx="7"/></g>
+<g font-size="18" fill="#225eab" text-anchor="middle" font-weight="700"><text x="145" y="177">LUT/FF</text><text x="253" y="177">LUT/FF</text><text x="361" y="177">LUT/FF</text><text x="469" y="177">LUT/FF</text><text x="145" y="252">LUT/FF</text><text x="253" y="252">LUT/FF</text><text x="361" y="252">LUT/FF</text><text x="469" y="252">LUT/FF</text></g>
+<g font-size="19" text-anchor="middle" font-weight="700"><rect x="594" y="92" width="115" height="72" rx="10" fill="#e2faf0" stroke="#53a986" stroke-width="2"/><text x="651" y="135">BRAM</text><rect x="733" y="92" width="115" height="72" rx="10" fill="#fff0d9" stroke="#dba158" stroke-width="2"/><text x="790" y="135">DSP</text><rect x="594" y="179" width="115" height="72" rx="10" fill="#f2eaff" stroke="#a98ad0" stroke-width="2"/><text x="651" y="222">PLL/MMCM</text><rect x="733" y="179" width="115" height="72" rx="10" fill="#e1f7fa" stroke="#75bdca" stroke-width="2"/><text x="790" y="222">I/O</text><rect x="594" y="266" width="254" height="61" rx="10" fill="#fce8eb" stroke="#d59cab" stroke-width="2"/><text x="721" y="303">高速收發器（依型號）</text></g>
+</svg></div>
+<div class="two"><div class="panel"><strong>BRAM：</strong>晶片裡面的 RAM，用來暫存一批資料。<br><strong>DSP：</strong>加乘運算的專用單元，例如訊號處理。<br><strong>Clock 資源：</strong>PLL／MMCM、clock routing，管理時脈。</div><div class="panel"><strong>I/O：</strong>連接外部腳位與周邊電路。<br><strong>高速收發器：</strong>部分 FPGA 有高速 SerDes。<br><strong>Routing：</strong>把 LUT、FF、BRAM 等接成你想要的電路。</div></div>
+<div class="callout green"><strong>面試講法：</strong>「LUT 是可程式化查表邏輯，FF 是受 clock 控制的暫存器。FPGA 由大量 LUT/FF 和可程式化 routing 組成，還會有 BRAM、DSP、Clock、I/O 等專用資源，適合較複雜的資料處理與介面控制。」</div>
+</section>
+
+<section class="section" id="compare">
+<div class="kicker">05 · 不要死背</div><h2>所以 CPLD 和 FPGA 到底差在哪裡？</h2>
+<div class="scroll-table"><table><thead><tr><th>你要比較的東西</th><th>傳統 macrocell 型 CPLD</th><th>典型 LUT 型 FPGA</th></tr></thead><tbody>
+<tr><td><strong>主要邏輯積木</strong></td><td>Macrocell：AND/OR product terms，常含 FF</td><td>LUT + FF（搭配 routing）</td></tr>
+<tr><td><strong>想成什麼？</strong></td><td>少量、較固定的大型邏輯工作室</td><td>大量、可自由排列的小型邏輯積木</td></tr>
+<tr><td><strong>典型任務</strong></td><td>Power/reset sequence、glue logic、簡單 FSM</td><td>高速資料路徑、協定處理、DSP、較複雜 FSM</td></tr>
+<tr><td><strong>資源特性</strong></td><td>規模較小、常用非揮發配置</td><td>邏輯資源較多、常內建 BRAM/DSP/Clock 等</td></tr>
+<tr><td><strong>有沒有 FF？</strong></td><td>有，許多 macrocell 內就有 FF</td><td>有，LUT 配合 FF 使用</td></tr>
+</tbody></table></div>
+<div class="callout orange"><strong>面試一定要加這句：</strong>「這是典型差異，不是絕對規則。」例如 Intel／Altera <strong>MAX II、MAX V</strong> 是 CPLD 產品家族，但內部基本邏輯元件也使用 <strong>LUT + register</strong>。因此不能說「凡是 CPLD 就一定沒有 LUT」。同樣地，FPGA 也不一定全部用 SRAM 配置。</div>
+<h3>把你原本的工作背景接進面試答案</h3>
+<div class="panel"><p>「我過去比較熟系統板上的 clock、reset、power sequencing、介面與驗證。若把這些控制功能放到 programmable logic 裡，簡單邏輯可以使用 CPLD，較複雜的功能則會評估 FPGA。我知道 RTL 會描述暫存器和組合邏輯，實際實作時要留意 setup / hold timing；CPLD 的傳統 macrocell 與 FPGA 的 LUT/FF 也是不同的資源組織方式。」</p></div>
+<p class="muted small">這是表達你理解系統整合與基本原理的說法；若沒有親自做過 FPGA RTL 專案，不要把它說成已具備完整設計和 timing closure 經驗。</p>
+<h3>用 4 題確認你真的懂</h3>
+<div class="quiz"><details><summary>Q1. RTL 是某一種晶片，還是描述電路的方法？</summary><p>是<strong>描述電路的方法／抽象層級</strong>。例如用 Verilog 寫 RTL，描述資料如何在 FF 之間運算與傳遞。</p></details><details><summary>Q2. 什麼情況會 setup violation？</summary><p>資料在有效 clock 邊緣前，沒有提前滿足 FF 的 setup time 要求，例如資料太晚到。這是 timing 檢查，不等於 C 程式語法錯誤。</p></details><details><summary>Q3. LUT 和 FF 分別做什麼？</summary><p>LUT 做<strong>組合邏輯運算</strong>；FF 在<strong>clock 邊緣把 D 的值存成 Q</strong>。你可以回到上面的互動區實測。</p></details><details><summary>Q4. CPLD 一定只有 Macrocell、沒有 LUT 嗎？</summary><p>不一定。傳統 CPLD 常見 macrocell／product-term 架構，但 MAX II／MAX V 等 CPLD 使用 LUT-based 邏輯元件。</p></details></div>
+</section>
+
+<section class="section sources">
+<div class="kicker">官方技術資料</div><h2>參考資料（英文）</h2>
+<p>這份圖解是<strong>教學簡化示意</strong>，非任何特定晶片的原廠實體 layout。需要查規格或實際 timing 時，請依器件 datasheet、timing model 和約束檔為準。</p>
+<ol>
+<li>AMD Vivado Synthesis UG901：<a href="https://docs.amd.com/r/en-US/ug901-vivado-synthesis" target="_blank" rel="noopener">RTL 綜合與邏輯對應</a></li>
+<li>AMD UG1388：<a href="https://docs.amd.com/r/2024.1-English/ug1388-acap-system-integration-validation-methodology/Understanding-Timing-Reports" target="_blank" rel="noopener">Setup／Hold、WNS timing 報告</a></li>
+<li>AMD Spartan UltraScale+ LUT6_2：<a href="https://docs.amd.com/r/en-US/ug1704-spartan-ultrascaleplus-libraries/LUT6_2" target="_blank" rel="noopener">LUT 的基本原理與資源</a></li>
+<li>Microchip ATF1508AS CPLD：<a href="https://ww1.microchip.com/downloads/en/DeviceDoc/ATF1508AS%28L%29-5V-128-Macrocell-CPLD-Data-Sheet-20006682A.pdf" target="_blank" rel="noopener">Macrocell、product terms、FF 與 interconnect</a></li>
+<li>Altera／Intel Quartus logic cell 定義：<a href="https://resources.altera.com/quartushelp/18.0/reference/glossary/def_lcell.htm" target="_blank" rel="noopener">MAX II／MAX V 的 LUT + register 例外</a></li>
+</ol>
+</section>
+<div class="footer">FPGA / CPLD 學習教材 · 完整內容可離線開啟 · 圖解與互動全部包含在單一 HTML 檔案中</div>
+</div>
+<script>
+(function(){
+'use strict';
+var slider=document.getElementById('lead'),label=document.getElementById('leadLabel'),result=document.getElementById('slackLabel'),wave=document.getElementById('dataWave'),marker=document.getElementById('dataMarker'),note=document.getElementById('changeNote');
+function timing(){var lead=Number(slider.value),slack=lead-200,x=560-lead*.7,pass=slack>=0;label.textContent=lead+' ps';result.textContent='Slack = '+(slack>0?'+':'')+slack+' ps，'+(pass?'Setup 滿足':'Setup 違反');result.className='result'+(pass?' pass':'');wave.setAttribute('d','M130 165 H'+x+' V125 H850');wave.setAttribute('stroke',pass?'#168360':'#cb4655');marker.setAttribute('x1',x);marker.setAttribute('x2',x);marker.setAttribute('stroke',pass?'#168360':'#cb4655');note.setAttribute('x',x);note.setAttribute('fill',pass?'#168360':'#cb4655');}
+slider.addEventListener('input',timing);timing();
+var a=document.getElementById('inputA'),b=document.getElementById('inputB'),q=0;
+function render(){var av=a.checked?1:0,bv=b.checked?1:0,d=av&bv;document.getElementById('av').textContent=av;document.getElementById('bv').textContent=bv;document.getElementById('dval').textContent=d;document.getElementById('qval').textContent=q;document.getElementById('dlamp').className='led'+(d?' on':'');document.getElementById('qlamp').className='led'+(q?' on':'');Array.prototype.forEach.call(document.querySelectorAll('#truth tr'),function(row){row.style.background=(Number(row.dataset.a)===av&&Number(row.dataset.b)===bv)?'#d7f4e5':'';row.style.fontWeight=(Number(row.dataset.a)===av&&Number(row.dataset.b)===bv)?'800':'400';});}
+a.addEventListener('change',render);b.addEventListener('change',render);document.getElementById('clockbtn').addEventListener('click',function(){q=(a.checked?1:0)&(b.checked?1:0);render();document.getElementById('ffstatus').textContent='Clock 上升緣：FF 已把當下 D = '+q+' 存成 Q。';});document.getElementById('resetbtn').addEventListener('click',function(){a.checked=false;b.checked=false;q=0;render();document.getElementById('ffstatus').textContent='已重設為 0，請改 A/B 再試一次。';});render();
+})();
+</script>
+</body>
+</html>
